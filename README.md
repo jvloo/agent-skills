@@ -1,7 +1,8 @@
 # Agent Skills
 
-Portable skills for orchestrating local coding-agent CLIs with bounded authority, explicit approval
-preflights, and independent verification.
+Xavier Loo's collection of portable skills for practical agentic workflows. Skills are organized by
+capability so the repository can grow across engineering, research, collaboration, and meta-agent
+work without coupling them to one agent runtime.
 
 ## Skills
 
@@ -10,8 +11,9 @@ preflights, and independent verification.
 | Meta-agent | [`use-claude`](meta-agent/use-claude/SKILL.md) | Run Claude Code CLI as a bounded cross-model worker. |
 | Meta-agent | [`use-codex`](meta-agent/use-codex/SKILL.md) | Run Codex CLI/GPT as a bounded worker, with optional Codex subagents. |
 
-Both skills are parent-runtime, machine, shell, and operating-system agnostic. They define a worker
-contract and safety boundary without depending on one orchestrator's terminal or subagent APIs.
+The current skills form the `meta-agent` category. They are parent-runtime, machine, shell, and
+operating-system agnostic, defining worker contracts and safety boundaries without depending on one
+orchestrator's terminal or subagent APIs.
 
 ## Install
 
@@ -41,7 +43,8 @@ constrains its tools and workspace, independently verifies its output, and retai
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Changes are recorded in [CHANGELOG.md](CHANGELOG.md).
+See the [roadmap](ROADMAP.md) for planned directions and [CONTRIBUTING.md](CONTRIBUTING.md) for the
+contribution process. Changes are recorded in [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
