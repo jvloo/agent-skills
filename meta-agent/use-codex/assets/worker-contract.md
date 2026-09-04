@@ -23,12 +23,18 @@ SCOPE AND AUTHORITY
 - In scope: <paths/systems/actions>
 - Access: <read-only or explicitly authorized writes>
 - Commands: <allowed categories>
-- Network/external systems: <none or explicit allowance>
+- User/task authorization: <approved outcome and actions>
+- Parent-runtime approval: <approved process, filesystem, network, and external access>
+- Codex controls: <sandbox, approval policy, and enforced restrictions>
+- Local network: <closed or explicit allowance>
+- Hosted tools/external systems: <web search, apps/connectors, plugins, MCP, or none>
 - Excluded: commits, pushes, PR changes, destructive actions, secret disclosure, and <other>
 
 EXECUTION PROFILE
-- Model and reasoning effort: <chosen and verified>
-- Internal subagents: <disabled, or roles plus enforced concurrency>
+- Main model and reasoning effort: <task-selected default or explicit verified pair>
+- Child model and reasoning effort: <task-selected pair or explicit verified override>
+- Internal subagents: <disabled, or roles plus enforced concurrency and ownership>
+- Effective tool/config controls: <config layers, managed policy, web, apps, plugins, MCP, hooks>
 - Isolation: <sandbox and worktree/process boundary>
 - Limits: <wall-clock, cost/usage, retries, persistence>
 

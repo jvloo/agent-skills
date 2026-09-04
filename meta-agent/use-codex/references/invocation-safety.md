@@ -16,8 +16,8 @@ codex exec resume --help       # when resuming
 ```
 
 Do not expose credentials while diagnosing authentication. Inspect repository instructions,
-revision, dirty state, applicable user/project configuration, hooks, plugins, skills, MCP servers,
-rules, and trust settings before giving Codex access.
+revision, dirty state, effective user/project/managed configuration, hooks, web search, apps and
+connectors, plugins, skills, MCP servers, rules, and trust settings before giving Codex access.
 
 ## Approval preflight
 
@@ -25,8 +25,8 @@ Before any model prompt or internal child spawn, record and resolve:
 
 - working directory, revision, and in-scope paths;
 - read-only or write authority and workspace isolation;
-- allowed commands, network access, external systems, and credential exposure;
-- model and reasoning effort;
+- allowed commands, shell network, hosted tools, external systems, and credential exposure;
+- effective main and child model/effort, including requested overrides and compatibility;
 - whether Codex subagents are allowed, their enforced concurrency, and ownership boundaries;
 - wall-clock/cost limits, retry count, and session persistence.
 
@@ -38,17 +38,32 @@ Adapt this into the runtime's native approval message:
 
 ```text
 Allow the local Codex CLI to run <bounded task> in <directory> at <revision> using
-<model>/<effort>? It may <read/write/commands/network>. Codex subagents: <disabled, or enabled with
-enforced concurrency and the same scope>. Limits: <time/cost/retries/persistence>. It will not
-<commits/pushes/destructive actions/external mutations/other exclusions>.
+<effective model>/<effort>? It may <read/write/commands/local network> and use <hosted tools or
+none>. Codex subagents: <disabled, or enabled with enforced concurrency and the same scope>.
+Limits: <time/cost/retries/persistence>. It will not <commits/pushes/destructive actions/external
+mutations/other exclusions>.
 ```
 
-Any expansion in scope, writes, commands, network, external access, model/effort, subagents,
-concurrency, cost/time, or persistence requires a new checkpoint before a follow-up or resume.
+Any expansion in scope, writes, commands, network, hosted/external access, model/effort, subagents,
+concurrency, cost/time, or persistence requires fresh user/task authorization and applicable
+parent-runtime approval before a follow-up or resume.
+
+## Model and effort preflight
+
+Choose every unspecified model or effort using the entrypoint's task-based routing; explicit user
+choices take precedence. Resolve and verify the exact resulting pair against the installed CLI and
+account model catalog before launch. Stop if unavailable; never silently downgrade, upgrade, or
+change effort. Use `ultra`, or a model outside the default Sol/Terra/Luna routing set, only on
+explicit request.
+
+Use a supported runtime model picker or catalog without launching a model. When installed help
+exposes the experimental `codex debug models`, it can report the account catalog and supported
+efforts; ignore entries marked hidden or internal. Otherwise use installed help and current official
+documentation, and stop if the exact pair cannot be verified.
 
 ## Native controls
 
-Prefer explicit values on every call:
+Pass explicit security and execution controls on every call:
 
 | Intent | Codex controls |
 |---|---|
@@ -80,10 +95,17 @@ envelope is approved up front, prefer `approval_policy=never` so out-of-envelope
 return control to the orchestrator. Use `on-request` only when the process is actively supervised
 through a channel that can present and answer native Codex prompts.
 
-Do not use `--ignore-user-config` casually: it can improve reproducibility, but may also remove
-required safe defaults. Conversely, loaded configuration can add tools, MCP servers, hooks, or
-instructions. Inspect the effective layers and use `--strict-config` where configuration drift must
-fail rather than degrade silently.
+Do not use `--ignore-user-config` casually: it can remove required safe defaults. Loaded
+configuration can also add tools, MCP servers, plugins, hooks, or instructions. Inspect effective
+layers and use `--strict-config` where drift must fail rather than degrade silently.
+
+## Hosted-tool containment
+
+The shell sandbox applies to spawned commands. Its filesystem and network policy does not itself
+disable hosted web search, apps/connectors, plugins, or MCP tools. Inventory these routes and apply
+their effective feature, enablement, allowlist, and approval controls separately. A disabled local
+network is not a closed-network claim while any hosted route can retrieve or mutate external data.
+If the installed version cannot verifiably contain a route, disable it or report the limitation.
 
 ## Prompt transport and secrets
 

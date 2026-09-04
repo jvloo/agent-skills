@@ -11,12 +11,16 @@ contract on stdin. Adapt quoting to the host shell; do not copy shell syntax bli
 codex exec
   --sandbox <read-only-or-workspace-write>
   -c approval_policy=\"never\"
-  --model <supported-model>
-  -c model_reasoning_effort=\"<supported-effort>\"
   -c agents.enabled=false
+  --model <verified-model>
+  -c model_reasoning_effort=\"<verified-effort>\"
   --json
   -
 ```
+
+Choose each unspecified part of the pair using the entrypoint's task-based routing; explicit user
+choices take precedence. Verify the exact pair against the installed CLI and account catalog before
+launch; never substitute another pair.
 
 Use `--ephemeral` when the task does not need a resumable record. Use
 `--output-last-message <path>` when only the final message is needed. Use
@@ -38,8 +42,8 @@ The prompt should specify:
 - working directory, repository revision, and in-scope paths;
 - read-only versus write authority and explicit exclusions;
 - primary evidence to inspect and commands allowed;
-- whether network or external systems are allowed;
-- model, effort, subagent policy, concurrency, and time/cost limits;
+- local network plus hosted-tool/external-system allowances;
+- effective model/effort, subagent defaults and overrides, concurrency, and time/cost limits;
 - required output shape, evidence, uncertainties, and skipped checks;
 - stop conditions and actions that require returning to the orchestrator.
 

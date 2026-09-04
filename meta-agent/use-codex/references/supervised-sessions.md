@@ -39,14 +39,26 @@ them only after approval:
 -c agents.max_concurrent_threads_per_session=<approved-n>
 ```
 
-Codex supports default subagent model/effort and custom agent definitions in configuration. Set
-role-specific models, effort, sandbox, and instructions only when those files are already trusted or
-their creation is in scope. Explicit spawn parameters can override defaults, so managed enforcement
-or parent-launched workers are required when exact model/effort control is mandatory.
+Inspect and record `agents.default_subagent_model` and
+`agents.default_subagent_reasoning_effort`. Without overrides, children inherit the parent pair.
+Resolution order is explicit spawn, corresponding `[agents]` default, then parent; selecting a
+model through an explicit spawn or `[agents]` default without an associated effort uses that
+model's default effort. A custom agent file may then override declared settings; one that sets only
+`model` preserves the previously resolved effort.
+
+This runtime order does not define policy precedence. Explicit user choices come first; derive every
+unspecified field from the entrypoint's task routing. Treat `[agents]` defaults and custom-agent
+files as effective-config inputs, not authorization to use `ultra` or a model outside the default
+routing set. Verify the final effective pair after all layers resolve. If it differs from the policy
+pair, enforce the exact pair through supported controls or disable internal delegation and launch a
+separate top-level worker; stop when neither is possible. Never substitute silently.
 
 Tell the parent Codex worker which children to use, their ownership, output contract, and whether
 they may write. Require it to synthesize conflicts and cite evidence. Keep children read-only unless
 isolated writes are both supported and explicitly authorized.
+
+Reasoning effort, including `ultra`, never authorizes delegation. Keep `agents.enabled=false`
+unless the authorization envelope or applicable project/skill instructions explicitly allow it.
 
 If exact approval is required for every child, or the runtime cannot verify/enforce the child
 envelope, set `agents.enabled=false` and launch separate top-level workers instead.
