@@ -56,9 +56,11 @@ sections are explicit; do not omit them in a way that hides skipped work.
 ## Budget and supervision
 
 - Model and effort: `<model>; <effort>`
+- Model availability: <CLI selector/version, provider, compatibility, and Fable entitlement or billing evidence>
 - Cost or token ceiling: <limit>
 - Wall-clock timeout: <limit>
 - Claude subagents: <disabled by default, or approved autonomous purposes, ownership, tools, and isolation>
+- Child model and effort: <allowed values per child; `haiku` or `fable` requires an explicit user request>
 - Child count and concurrency: <advisory target plus enforcement mechanism; exact limits require a verified control>
 - Shared child constraints: <rules and evidence obligations every child must receive>
 - Session persistence: <disabled, retained for resume, or background-managed>

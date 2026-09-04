@@ -10,11 +10,9 @@ Confirm `--bg`, `agents`, `logs`, `attach`, and `stop` in installed help. Backgr
 mode are distinct and cannot be combined. Launch from the intended working directory with an
 explicit model, effort, permission mode, capability boundary, and prompt contract.
 
-Resolve user/task authorization and all known parent-runtime tool or sandbox approvals before the
-launch prompt reaches the model. This includes approval for the intended working directory,
-read/write access, commands, network or external systems, model/effort, background persistence,
-cost/time, and any Claude subagents or concurrency. Fail closed if required approval is unknown or
-unavailable. Use the runtime's native approval mechanism when present, not a plain-text workaround.
+Before launch, apply the approval preflight in
+[invocation-safety.md](invocation-safety.md), including background persistence and any subagent or
+concurrency envelope. Fail closed if required approval is unknown or unavailable.
 
 Use the installed syntax equivalent of this semantic pattern:
 
@@ -80,13 +78,14 @@ uncommitted changes, untracked files, and evidence.
 Use subagents for bounded side investigations that report into one Claude conversation. Use
 background sessions when the invoking agent owns coordination across independent conversations.
 Agent teams are experimental and disabled by default; teammates communicate and share a task list,
-but they do not automatically receive separate worktrees. Do not assume per-teammate worktree
-isolation: partition ownership so only one teammate writes each file, or choose independent sessions
-or subagents that support isolated worktrees. Parallelism multiplies token usage and synthesis cost,
-so bound the worker count and name one reconciliation owner. Do not enable subagents or teams unless
-their model, effort, concurrency, capability, and budget fit the pre-approved envelope. Treat a
-prompted child-count limit as advisory unless a verified control enforces it; use separately approved
-parent-launched sessions when exact per-child approval is required.
+but they do not automatically receive separate worktrees. Keep teammates read-only unless verified
+per-teammate writable isolation exists. File ownership alone does not isolate the index, generated
+files, tools, or user changes; use independent sessions or subagents with separate worktrees for
+concurrent writers. Parallelism multiplies token usage and synthesis cost, so bound the worker count
+and name one reconciliation owner. Apply the entrypoint's model and effort policy to every child, and
+do not enable subagents or teams unless their concurrency, capability, and budget fit the approved
+envelope. Treat a prompted child-count limit as advisory unless a verified control enforces it; use
+separately approved parent-launched sessions when exact per-child approval is required.
 
 Official references: [agent view](https://code.claude.com/docs/en/agent-view),
 [parallel agents](https://code.claude.com/docs/en/agents), and

@@ -4,10 +4,8 @@ Use `claude -p` for a finite assignment with a defined result and no need for li
 the prompt from [../assets/worker-contract.md](../assets/worker-contract.md), and apply the trust and
 prompt rules in [invocation-safety.md](invocation-safety.md).
 
-Before launch, resolve and record the full approval envelope from the contract. Do not send the
-prompt if user/task authorization or any required parent-runtime tool or sandbox approval is denied,
-unknown, or unavailable. Claude permission and tool flags constrain an approved call; they do not
-authorize it.
+Before launch, apply the approval preflight in [invocation-safety.md](invocation-safety.md) and record
+the full envelope in the contract. Claude flags constrain an approved call; they do not authorize it.
 
 ## Invocation shape
 
@@ -53,7 +51,10 @@ rule required; listing a tool in `--tools` does not itself approve its use.
 
 Omit `Agent` by default. If the approved envelope permits autonomous Claude-managed subagents,
 include the installed `Agent` tool explicitly; an allowlist that contains only read/search tools
-silently prevents delegation. A read-only shape is:
+silently prevents delegation. Apply the entrypoint's model and effort policy to every child: neither
+`haiku` nor `fable` is available without the user's explicit request, and each selected model and
+effort must pass the same compatibility and entitlement checks. A read-only shape without delegation
+is:
 
 ```text
 claude -p
@@ -61,7 +62,7 @@ claude -p
   --strict-mcp-config
   --permission-mode plan
   --permission-prompts none
-  --tools "Read,Grep,Glob,Agent"
+  --tools "Read,Grep,Glob"
   --disallowedTools "mcp__*"
   < <prompt-file>
 ```
@@ -73,11 +74,9 @@ provided with `--agents`, so do not combine those modes.
 
 When named specialists materially improve the task, omit `--safe-mode`, address untrusted workspace
 content with compatible installed controls and parent-runtime containment, and define a bounded
-read-only set with `--agents <trusted-json>`. Include each child's purpose, tools, model, turn limit,
-and output obligation. Where supported,
-`--append-subagent-system-prompt <shared-child-constraints>` can reinforce constraints common to
-every child. Defining agents does not enable delegation by itself: the parent still needs `Agent`.
-Require the parent to reconcile child findings rather than forwarding their verdicts.
+read-only set with `--agents <trusted-json>`. Include each child's purpose, tools, model, effort, turn
+limit, and output obligation. Defining agents does not enable delegation by itself: the parent still
+needs `Agent`. Require the parent to reconcile child findings rather than forwarding their verdicts.
 
 `--agents` bounds which named definitions are available; it does not enforce spawn count. Prompted
 child-count and concurrency limits are advisory unless a verified hook, permission handler, or

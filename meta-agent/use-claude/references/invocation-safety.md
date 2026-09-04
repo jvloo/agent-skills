@@ -19,6 +19,12 @@ Require a usable authenticated state before a model call. Do not expose credenti
 diagnosing authentication. Record the version because agent-view and isolation behavior evolve
 quickly.
 
+For `fable`, confirm the selector in installed help and verify account availability through a
+supported model-selection surface such as `/model`. `claude auth status` may show only a broad plan
+type; it does not prove seat entitlement, organization enablement, or usage-credit availability.
+Record whether access is included or usage-credit-backed and ensure that billing mode fits the
+approved budget. Fail closed when selector, provider, entitlement, or billing support is unknown.
+
 ## Approval preflight
 
 Resolve approval before a prompt reaches the model or Claude can create a child worker. Record the
@@ -27,7 +33,7 @@ planned envelope:
 - working directory, repository revision, and in-scope paths;
 - read-only or write authority;
 - allowed commands, network access, and external systems;
-- model and effort;
+- main and child model selectors, effort compatibility, provider, and any Fable entitlement evidence;
 - whether autonomous Claude subagents are allowed, their requested concurrency, any enforcement
   mechanism, and ownership boundaries;
 - cost ceiling, wall-clock timeout, retry limit, and session-persistence choice.
