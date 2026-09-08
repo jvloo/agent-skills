@@ -1,76 +1,60 @@
-# Claude worker contract
+# Worker contract
 
-Copy and fill this template for the Claude invocation. Remove unused guidance and replace every
-angle-bracketed field before launch.
+Use this template for complex work. For a simple consultation, keep objective, relevant inputs,
+allowed actions, output, and limits. Record existing authorization; these fields are not a user
+questionnaire. Remove unused sections and replace placeholders before dispatch.
 
-## Objective
+## Objective and acceptance
 
-<One bounded outcome for this worker.>
+- Objective: <one bounded outcome>
+- Done when: <observable acceptance criteria>
+- Required artifact or answer: <deliverable>
 
-## Definition of done
+## Context and ownership
 
-- <Observable acceptance criterion.>
-- <Required artifact or answer.>
+- Working directory: <absolute or runtime-resolved path>
+- Repository revision and starting state: <ref, commit, user changes; or not applicable>
+- Relevant sources and applicable instructions: <paths, URLs, or supplied evidence>
+- In-scope paths, questions, and systems: <scope>
+- Worker owns: <bounded investigation or artifact>
+- Invoking agent owns: <integration, acceptance, and external communication>
 
-## Execution context
+## Authority and execution
 
-- Working directory: `<absolute-or-runtime-resolved-path>`
-- Repository and revision: `<repository>; <branch/ref and commit>`
-- Starting state: `<clean, or exact known user changes to preserve>`
-- Applicable instructions: `<paths to repository instructions and active constraints>`
-- Authoritative sources: `<source paths, URLs, or commands to verify>`
+- Existing user/task authorization: <approved actions and explicit exclusions>
+- Authentication evidence: <provider route, status or credential-source check; no secrets>
+- Required capability evidence: <preflight results and relevant configuration/containment>
+- Parent-runtime approval: <native approval reference, or not required>
+- Worker controls: <permission/sandbox mode, tools, relevant configuration sources>
+- Allowed actions and directories: <reads, edits, commands, and minimum roots>
+- Network and external systems: <allowed targets and authorized mutations, or none>
+- Secrets: <required credential mechanism and data that must not enter prompts or output>
 
-## Scope and ownership
-
-- In scope: <files, modules, questions, or systems>
-- Out of scope: <explicit exclusions>
-- Worker owns: <investigation or artifact>
-- Invoking agent owns: <decisions, integration, external communication, acceptance>
-
-## Authority and capability
-
-- User/task authorization: <approved outcome and explicit action boundaries>
-- Parent-runtime approval: <native tool/sandbox approval status and identifier, or not required>
-- Claude internal controls: <permission mode, tools, settings sources, and isolation>
-- Allowed actions: <read, edit, and narrowly scoped commands>
-- Forbidden actions: <commits, pushes, destructive or external mutations unless authorized>
-- Allowed directories: <minimum required roots>
-- Network and external systems: <none, read-only targets, or explicitly authorized mutations>
-- Secrets: <sources that must not be opened, echoed, copied, or committed>
-
-If a required approval is denied, unknown, or unavailable, do not invoke the model. Use the parent
-runtime's native approval mechanism when available; plain-text confirmation does not replace a
-runtime-enforced approval.
+Do not infer permission to commit, publish, perform destructive actions, or access additional
+systems. Perform such actions only when this contract includes existing authorization and the
+runtime permits them. If required approval is denied or unavailable, report the blocker through
+the invoking agent.
 
 ## Evidence and output
 
-- Evidence required: <file:line findings, diffs, command results, or source links>
-- Checks to run: <exact authoritative validations>
-- Output shape: <schema or concise report structure>
-- Uncertainty handling: <state assumptions, missing evidence, and skipped checks>
+- Evidence: <file/symbol findings, diffs, command results, or source links>
+- Checks: <authoritative validations appropriate to the task>
+- Output: <concise prose or the sibling result.schema.json when structured handoff is needed>
+- Include uncertainties, skipped checks, and blockers; do not claim unverified completion.
 
-Unless the task needs another schema, return: status (`complete`, `blocked`, or `failed`), summary,
-evidence, changed artifacts, checks with outcomes, uncertainties, and any required input. Empty
-sections are explicit; do not omit them in a way that hides skipped work.
+## Limits and supervision
 
-## Budget and supervision
-
-- Model and effort: `<model>; <effort>`
-- Cost or token ceiling: <limit>
-- Wall-clock timeout: <limit>
-- Claude subagents: <disabled by default, or approved autonomous purposes, ownership, tools, and isolation>
-- Child count and concurrency: <advisory target plus enforcement mechanism; exact limits require a verified control>
-- Shared child constraints: <rules and evidence obligations every child must receive>
-- Session persistence: <disabled, retained for resume, or background-managed>
+- Model and effort: <verified selection>
+- Cost/usage limit: <behavioral target, stopping threshold, or enforced ceiling; identify which>
+- Wall-clock deadline and controller: <limit, ownership, child-work cleanup>
 - Retry limit: <count and retryable conditions>
+- Internal subagents: <disabled, or purposes, ownership, models, tools, and isolation>
+- Child concurrency/depth: <targets and enforcement for any required exact limits>
+- Persistence: <none, resume, or supervised background>
 
 ## Stop conditions
 
-Stop and report without expanding scope when:
-
-- <required evidence, dependency, authentication, or capability is unavailable>;
-- <the task needs an unapproved destructive, external, secret-bearing, or privileged action>;
-- <the observed repository state or revision differs from this contract>;
-- <continuing would materially expand the approved scope or capability envelope>;
-- <budget, timeout, or retry limit is reached>;
-- <independent findings materially conflict and primary evidence does not resolve them>.
+Stop and report when required evidence or capability is unavailable, a required control cannot be
+enforced, an action would exceed authorization, unexpected workspace changes invalidate the agreed
+inputs, or the time/cost/retry limit is reached. Expected edits by this worker do not invalidate the
+starting-state record. Return unresolved material conflicts to the invoking agent.

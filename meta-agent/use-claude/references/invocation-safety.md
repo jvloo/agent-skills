@@ -1,117 +1,107 @@
 # Invocation safety
 
-Use this reference before launching Claude or deciding which trust, configuration, permission, and
-tool controls apply. Confirm every option against the installed CLI; top-level help is not an
-exhaustive description of every subcommand.
+Read for initial execution setup; revisit when the executable, configuration, trust, capabilities,
+or provider changes. Confirm required controls against installed help and version-compatible official
+documentation. Help can omit supported options. Keep a required control, use a verified equivalent,
+or stop; optional conveniences may be omitted.
 
 ## Preflight
 
-Use the host's executable lookup, then check:
+Record a concise outcome for each applicable check below. Use read-only inspection, not model
+prompts or destructive permission probes.
 
-```text
-claude --version
-claude auth status
-claude --help
-claude <relevant-subcommand> --help
-```
+| Check | Sufficient evidence before dispatch |
+|---|---|
+| Authority | The user's request and existing approvals cover the intended actions; native runtime approval is granted or not required. |
+| Execution context | Resolved executable/version, process cwd, OS user, provider/auth route, relevant environment and credential-store access. Record variable names or status, never secrets. |
+| Workspace | In Git: revision, dirty state, applicable instructions, and writer ownership. Outside Git: verified directory and supplied inputs; revision/branch fields are not applicable. |
+| Capabilities | Explicit launch controls plus the applicable configuration/policy layers that can alter the required tools, roots, network, hooks, or external access. Check only capabilities relevant to this launch. |
+| Limits | Deadline controller, retry bound, persistence choice, and an enforcement mechanism for each limit the contract requires to be hard. |
+| Children | When enabled: supported child controls, shared/differing auth context, allowed tools, ownership, and isolated workspaces for writers. |
 
-Require a usable authenticated state before a model call. Do not expose credential values while
-diagnosing authentication. Record the version because agent-view and isolation behavior evolve
-quickly.
+Before each model dispatch or resume, perform the authentication check for the selected route below.
+Reuse unchanged version, trust, and configuration evidence; recheck a differing child context.
+If the sandbox cannot access the normal credential store, diagnose through an authorized execution
+path. A sandbox-only failure does not prove the user's login is invalid.
 
-## Approval preflight
+Distinguish behavioral scope from enforced boundaries. A contract can define the question or files
+to work on; a required filesystem/network/tool restriction needs evidence from the runtime or
+documented CLI control. Intended flags alone do not override managed policy. If a required boundary
+cannot be established, narrow to an already authorized capability set or report the specific gap.
+This is not a requirement to audit unrelated configuration or prove every possible worker action safe.
 
-Resolve approval before a prompt reaches the model or Claude can create a child worker. Record the
-planned envelope:
+## Authentication
 
-- working directory, repository revision, and in-scope paths;
-- read-only or write authority;
-- allowed commands, network access, and external systems;
-- model and effort;
-- whether autonomous Claude subagents are allowed, their requested concurrency, any enforcement
-  mechanism, and ownership boundaries;
-- cost ceiling, wall-clock timeout, retry limit, and session-persistence choice.
+Use `claude --version` and relevant `--help` commands to establish the installed interface.
+Resolve the provider and auth route from the launch environment, settings, and flags.
 
-User or task authorization, parent-runtime execution approval, and Claude's internal controls are
-independent. Use the parent runtime's native tool or sandbox approval mechanism when it exists; do
-not treat a plain-text confirmation as a workaround for an approval the runtime itself must grant.
-Perform executable discovery, version/help inspection, authentication status, and repository-state
-checks without a model call where the runtime permits those read-only operations.
+- For normal account/provider execution, run `claude auth status` through the same authorized
+  execution path. Require a usable status for the selected route, not an unrelated account login.
+- For `--bare`, confirm installed behavior: current releases do not read OAuth/keychain auth.
+  Anthropic uses `ANTHROPIC_API_KEY` or a helper supplied through `--settings`; third-party
+  providers use their own credentials. Verify that source without printing credentials.
+- If a custom provider/helper cannot be represented by auth status, use its documented
+  non-generating credential/status check. Do not diagnose missing Claude account login as a
+  failure of an independently authenticated provider.
 
-When runtime approval is required, adapt this into its native approval message:
+An environment API key can select a paid billing route instead of subscription usage. Check that
+the resolved route fits existing spending authority. Credential presence/status does not prove
+remote validity or model entitlement. If no non-generating validity check exists, record the
+limitation; the first authorized, bounded task call may establish remote access. Do not add a
+separate paid probe. Stop on an authentication error instead of retrying indefinitely.
 
-```text
-Allow the local Claude Code CLI to run <bounded task> in <working directory> using
-<model>/<effort>? It may <read/write/commands/network>. Claude subagents: <disabled, or allowed
-autonomously within the same scope; enforced limit/control or advisory target>. Limits: <cost>,
-<time>, <persistence>. It will not
-<commits/pushes/destructive or external mutations/other exclusions>.
-```
+## Workspace and controls
 
-Keep the request narrow enough that approval communicates the real capability envelope. Do not ask
-for a reusable executable or command-prefix approval broader than the task requires merely to avoid
-future prompts.
+Print mode skips the workspace-trust dialog and can silently ignore invalid settings. Inspect
+applicable repository instructions and configuration that can change required controls: settings,
+hooks, plugins, skills, commands, agents, and MCP servers. Use the following controls for their
+documented purpose; combine them only as needed.
 
-Do not assume the parent runtime can intercept Claude's internal `Agent` calls. Agent definitions
-and prompt instructions can shape child behavior but do not hard-limit spawn count. If approval is
-required for each child or an exact count cannot be enforced by a verified control, omit `Agent` and
-dispatch each Claude process separately through the parent runtime's native approval path.
+| Control | Effect and limit |
+|---|---|
+| `--tools` | Selects built-in tool availability; does not pre-approve calls or independently exclude MCP. |
+| `--allowedTools` / `--disallowedTools` | Pre-approves / denies matching calls. Keep command rules narrow. |
+| `--permission-mode plan` | Analysis/planning behavior; shell commands can still run. Use a read/search tool set for read-only inspection. |
+| `--permission-mode dontAsk` | Unattended work with denied prompts; pre-approve necessary non-read-only actions separately. |
+| `--permission-prompts none` | In supported print-mode versions, denies actions that would prompt. Does not replace the permission mode. |
+| `--restricted` | Removes command/code tools and WebFetch unless explicitly restored via `--tools`; ignores user/project/local settings, confines file tools to working directories, and rejects bypass mode. Writes to settings, Git, and tool configuration require a person or configured permission handler. Managed settings and `--settings` still apply. |
+| `--strict-mcp-config` | Excludes MCP outside explicit configuration, subject to managed policy. |
+| `--safe-mode` | Disables discovered customizations, including custom agents and `--agents` definitions; preserves built-in tools, auth, and policy. |
+| `--bare` | Minimal discovered context/customization; retains command/file tools and changes authentication behavior. |
+| `--setting-sources` | Chooses user/project/local settings sources; does not remove managed policy or explicit settings. |
 
-Fail closed if any required approval is denied or its state cannot be determined. Narrow the
-contract to an already approved envelope or stop and request the missing approval. If new evidence
-would materially expand scope, writes, commands, network or external access, model/effort,
-subagents, concurrency, cost/time, or persistence, obtain fresh user authorization and applicable
-runtime approval before sending a follow-up, resuming, or starting another worker.
+Always choose a permission mode. Use monitored manual/default mode only when a person or handler
+can answer prompts. Never use bypass permissions merely to avoid prompts. An exceptional bypass
+requires specific user/runtime authority and independent external containment.
+For an authorized commit, `--restricted` plus `dontAsk` and a Git allowlist is insufficient:
+the protected-write gate still needs a person or permission handler. Before dispatch, choose a
+compatible authorized execution setup that preserves required containment, or let the invoking
+agent commit verified changes. This is a capability adjustment, not missing user authorization.
+For untrusted workspace content, `--safe-mode` can remove discovered instructions; pass required
+trusted instructions explicitly. For actual untrusted command execution, use host/OS containment.
 
-## Trust and containment controls
+No Git repository is required for supplied-text consultations. Use a verified directory. Stdin is
+limited to 10 MB; provide larger inputs as files the worker is authorized to read. A background
+session's prompt file must remain accessible in its intended working directory until consumed;
+use an untracked, ignored path, preserve existing files, and remove it when no longer needed.
 
-`claude -p` skips the workspace-trust dialog. Inspect repository instructions, settings, hooks,
-plugins, skills, commands, agents, and MCP configuration before using print mode in a workspace.
-Choose controls for the threat being addressed; their names are not synonyms.
+## Approval and prompt transport
 
-| Control | What it changes | What it does not provide |
-|---|---|---|
-| `--safe-mode` | Disables customizations for troubleshooting, while policy settings still apply | Built-in tools, permission policy, or host-process containment |
-| `--bare` | Skips most auto-discovered project/user customization and context for a minimal scripted call; current releases may require API-key, provider, or configured helper authentication instead of OAuth/keychain | A read-only worker; Bash and file tools remain available, and authentication behavior must be confirmed in installed help |
-| `--restricted` | Removes command/code tools and WebFetch by default, ignores user/project/local settings, confines file tools to working directories, and refuses bypass mode | An OS sandbox; `--tools` can explicitly add command/code tools back |
-| `--setting-sources` | Selects which user, project, and local setting sources load | Control over managed policy or explicit `--settings`; tool or process isolation |
-| `--strict-mcp-config` | Ignores MCP servers outside explicit `--mcp-config` input, subject to managed policy | Disabling built-in tools or containing the process |
+Existing authorization does not need another confirmation. Use the parent runtime's native approval
+mechanism only when required; a chat confirmation does not replace sandbox/tool approval. A material
+expansion beyond existing authority needs authorization before the next action. A routine in-scope
+model choice, follow-up, or previously authorized write is not automatically an expansion.
 
-Combine controls when their concerns overlap. For example, restricted mode does not by itself omit
-all MCP servers, so pair it with strict MCP configuration when MCP exclusion matters. Do not weaken
-restricted mode by naming Bash, PowerShell, REPL, or another code-running tool in `--tools` unless
-the contract requires it and the parent runtime supplies adequate containment.
+When native approval is needed, describe the concrete task, directory, permitted actions, provider,
+model, relevant child permissions, limits, and exclusions. Do not request a reusable executable or
+command-prefix approval broader than the task requires.
 
-These are CLI policy controls, not hard host containment. For adversarial content, untrusted code,
-or commands with material host impact, use a parent-runtime or operating-system sandbox with
-filesystem, process, credential, and network boundaries.
+Never interpolate code, logs, or Markdown into shell command text. Send the contract through a safe
+stdin facility or a securely created, access-restricted prompt file. Keep temporary files outside
+tracked paths, remove them when no longer needed, and do not place real secrets in prompts. Avoid
+running untrusted repository code in an environment containing credentials. Worktrees and CLI tool
+policies are not substitutes for host containment when untrusted code requires it.
 
-## Prompt-file safety
-
-Adapt commands to the host shell. Never interpolate code, logs, Markdown, or other untrusted text
-into a shell-quoted prompt: quotes, substitutions, and control characters can change execution.
-Prefer the parent runtime's safe stdin facility or a securely created, access-restricted temporary
-file.
-
-Piped stdin is limited to 10 MB. For larger input, place it in a file Claude is allowed to read and
-reference that path in the contract. When an interactive or background session must read a prompt
-file, keep it in the intended working directory, verify the path is untracked and ignored, do not
-overwrite a tracked file, and remove it after the session no longer needs it.
-
-## Permission and tool controls
-
-Always pass an explicit `--permission-mode` suited to the task. Prefer `plan` for read-only analysis,
-`dontAsk` for unattended fixed-tool calls, and a monitored default/manual mode when a person or
-permission handler will answer prompts. Never use `bypassPermissions` merely to avoid prompts.
-
-These Claude controls implement only the approved envelope. They cannot replace missing user
-authority or parent-runtime execution approval.
-
-For unattended print-mode calls, add `--permission-prompts none` only when installed help exposes
-it. It makes any action that would prompt fail automatically; the permission mode still controls
-the remaining decisions. `--tools` selects available built-in tools, `--allowedTools` pre-approves
-matching calls, and `--disallowedTools` denies tools or patterns. None substitutes for the others.
-
-Official references: [CLI reference](https://code.claude.com/docs/en/cli-usage),
+Official sources: [CLI reference](https://code.claude.com/docs/en/cli-usage),
 [permission modes](https://code.claude.com/docs/en/permission-modes), and
 [programmatic usage](https://code.claude.com/docs/en/headless).

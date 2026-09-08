@@ -1,93 +1,120 @@
 # Supervised sessions
 
-Use Claude-managed background sessions for work that is long-running or benefits from steering.
-Use a foreground interactive session only when background management is unavailable and the parent
-runtime can monitor and communicate with the process.
+Read when using a resume, live steering, parallel workers, or internal delegation. Prefer a finite
+[bounded worker](bounded-worker.md) when persistence or steering adds no value.
 
-## Launch and recovery
+## Resume and steering
 
-Confirm `--bg`, `agents`, `logs`, `attach`, and `stop` in installed help. Background mode and print
-mode are distinct and cannot be combined. Launch from the intended working directory with an
-explicit model, effort, permission mode, capability boundary, and prompt contract.
+Capture and use an exact session identifier. Recheck authentication and changed scope, workspace,
+capabilities, model/effort, limits, and persistence using [preflight](invocation-safety.md). Expected
+worker edits are part of the follow-up context, not an automatic scope violation. Reapply required
+controls where resume does not preserve them. Ask for new approval only when existing authority or
+runtime policy requires it.
 
-Resolve user/task authorization and all known parent-runtime tool or sandbox approvals before the
-launch prompt reaches the model. This includes approval for the intended working directory,
-read/write access, commands, network or external systems, model/effort, background persistence,
-cost/time, and any Claude subagents or concurrency. Fail closed if required approval is unknown or
-unavailable. Use the runtime's native approval mechanism when present, not a plain-text workaround.
+Retain `session_id` from print-mode output. Resume with `claude -p --resume <session_id>`
+plus the verified model, tools, permission, budget, and output controls, sending the new contract on
+stdin. Do not assume a bare resume preserves the launch restrictions. A one-shot run with
+`--no-session-persistence` cannot be resumed.
 
-Use the installed syntax equivalent of this semantic pattern:
+For background sessions, use the captured short ID for logs, attach, and stop commands. Attaching
+can restart a stopped session; revalidate before attaching as well as before sending a follow-up.
 
-```text
-claude --bg
-  --name <session-name>
-  --model <model>
-  --effort <effort>
-  --permission-mode <manual-or-dontAsk>
-  --tools <required-built-in-tools>
-  [--allowedTools <pre-approved-rules>]
-  "Read <prompt-file> and execute that contract."
-```
+## Supervision and cleanup
 
-Use monitored manual/default mode when the supervisor can answer prompts. For unattended
-background work, use `dontAsk` with only the required tools and narrowly pre-approved rules so an
-unexpected action fails instead of waiting invisibly.
+A supervisor must track completion, deadline, retry limits, and owned child work. Inspect logs at
+useful milestones, steer only to resolve an in-scope question or drift, and distinguish completed,
+blocked, failed, stopped, and timed-out states. A timeout on a launcher that has already exited
+does not stop detached work.
 
-`claude --bg` prints the session's short ID. Capture that launch output directly and retain the ID
-for `claude logs <id>`, `claude attach <id>`, and `claude stop <id>`. Do not rediscover an ID by name
-when direct capture succeeded. If launch output was lost or state must be reconciled, recover with:
+Use `claude --bg` only when deliberate persistence or steering warrants its supervisor.
+Confirm `--bg`, `agents`, `logs`, `attach`, and `stop` in installed help.
+Background and print mode cannot be combined; `--max-budget-usd` applies only to print mode.
+Use print mode when a required spending threshold cannot be enforced for background execution.
+Periodic billing estimates cannot guarantee a hard cap.
 
-```text
-claude agents --json --all --cwd <working-directory>
-```
+Before detaching, establish a deadline controller that survives the launcher, captures the returned
+worker ID, stops owned work at the deadline, and confirms all owned work ended. On supported
+versions, make [CLAUDE_CODE_DISABLE_BG_EXIT_HANDOFF](https://code.claude.com/docs/en/env-vars#variables)
+equal to `1` in the actual background worker
+so its background shell commands, dynamic workflows, and background subagents stop with the session
+process. Check the supervisor/settings environment, not just the launcher's environment.
+This control requires v2.1.196+, with subagent coverage from v2.1.198.
 
-Use only flags shown by `claude agents --help`. Verify the recovered session's directory, name,
-state, and timing before acting on it. Stop a session only when cancellation is authorized or it is
-unsafe, irrecoverably off-scope, or no longer useful. Preserve useful evidence and changes before
-deleting any session or worktree.
+By default that work can survive `claude stop <id>`; a stopped session row is not proof that its
+children stopped. If handoff cannot be disabled, use a verified controller that stops all owned
+work, or fall back to a foreground bounded worker. Do not delete the session/worktree merely to
+achieve cancellation.
+Preserve any required live steering in a fallback: use a foreground interactive session with a
+verified input channel when print mode cannot provide it, or report that specific capability gap.
 
-## Supervision loop
+Launch from the verified directory with explicit model/effort, permission mode, tool boundary,
+and contract. Use monitored manual/default mode only with a prompt handler; unattended background
+work uses `dontAsk` with narrowly pre-approved actions. Capture the short ID from `--bg`
+output. Use `claude logs <id>`, `claude attach <id>`, and `claude stop <id>`.
+If the ID is lost, recover with `claude agents --json --all --cwd <directory>` when supported,
+matching directory, name, and start time before acting.
 
-- Inspect logs and state at useful milestones; avoid busy polling.
-- Attach or send input only to resolve an in-scope question or correct drift.
-- Treat every steering prompt, resume, and parent-initiated worker launch as an approval checkpoint;
-  material expansion requires new authorization and applicable parent-runtime approval first.
-- Do not assume the parent runtime can intercept Claude-internal child spawns. Enable `Agent` only
-  when the upfront envelope permits autonomous delegation within existing capability, cost, and
-  time bounds.
-- Enforce the contract's cost, elapsed-time, retry, and stop limits outside the worker.
-- On completion, inspect repository status and diff, capture test evidence, and verify independently.
-- Treat `Needs input`, failed, stopped, and timed-out states as distinct outcomes.
+Before deleting any session or workspace, account for edits, commits, untracked files, and evidence.
+Termination does not authorize deleting useful artifacts. Do not stop unrelated user sessions.
 
-## Worktrees
+## Parallel workers and workspaces
 
-Every concurrent writer gets a separate worktree. Before launch, establish:
+Launch separate top-level workers for independent failure handling or exact per-worker control.
+Bound concurrency in the parent runtime and name one reconciliation owner. Parallel readers may
+share stable inputs; every concurrent writer needs an isolated workspace, normally a Git worktree.
+Disjoint file assignments alone do not satisfy this isolation rule.
 
-- the trusted repository root and whether workspace trust has been accepted where required;
-- the exact base ref—Claude worktrees normally use `origin/HEAD`, with local `HEAD` as fallback when
-  no remote is available or fetching fails, unless configured otherwise;
-- the source revision and expected clean/dirty state;
-- which ignored files may be copied and whether they contain credentials;
-- who owns integration and when cleanup is safe.
+Before launching writers, verify the actual base revision, known user changes, applicable
+instructions, and any ignored files copied into the workspace. Copy only what the task needs;
+worktrees do not isolate credentials, network, or external systems. Review and integrate each diff
+before cleanup.
 
-Worktrees isolate file edits, not credentials, processes, network access, external systems, or the
-semantic correctness of changes. Inspect the actual worktree revision and diff rather than assuming
-it matches the dispatch checkout. Never delete a session or worktree before accounting for commits,
-uncommitted changes, untracked files, and evidence.
+Claude-created worktrees normally start from `origin/HEAD`, with local `HEAD` as fallback
+when no remote is available or fetching fails, unless configured otherwise. Verify the actual ref;
+do not assume it matches the dispatch checkout.
 
-## Claude concurrency choices
+Agent teams do not automatically provide separate worktrees. Under this skill, teammates sharing
+a checkout must be read-only or have at most one active writer. For concurrent editing, use
+independent sessions or subagents with verified isolated worktrees.
 
-Use subagents for bounded side investigations that report into one Claude conversation. Use
-background sessions when the invoking agent owns coordination across independent conversations.
-Agent teams are experimental and disabled by default; teammates communicate and share a task list,
-but they do not automatically receive separate worktrees. Do not assume per-teammate worktree
-isolation: partition ownership so only one teammate writes each file, or choose independent sessions
-or subagents that support isolated worktrees. Parallelism multiplies token usage and synthesis cost,
-so bound the worker count and name one reconciliation owner. Do not enable subagents or teams unless
-their model, effort, concurrency, capability, and budget fit the pre-approved envelope. Treat a
-prompted child-count limit as advisory unless a verified control enforces it; use separately approved
-parent-launched sessions when exact per-child approval is required.
+## Internal delegation
 
-Official references: [agent view](https://code.claude.com/docs/en/agent-view),
-[parallel agents](https://code.claude.com/docs/en/agents), and
+Choose internal subagents when useful independent work justifies coordination and cost. Give each
+child a purpose, scope, output obligation, and suitable model/effort. Verify shared authentication
+and supported child capabilities once; recheck differing contexts. Keep children read-only unless
+isolated writes are supported and authorized. Require the parent worker to reconcile evidence.
+
+A prompted child-count limit is advisory. Distinguish concurrency, nesting depth, total lifetime
+spawns, and model/capability restrictions. If a required boundary cannot be enforced internally,
+disable that delegation route and use separately checked top-level workers. Do not replace an
+explicitly requested model or expand external access through children.
+
+The parent needs the `Agent` tool; defining `--agents <trusted-json>` does not enable it.
+Agent definitions should specify purpose, tools, model/effort, turn limit, output, and isolation.
+`--append-subagent-system-prompt`, where supported, can add shared behavioral constraints.
+`--safe-mode` disables custom definitions, so choose compatible trust controls if using them.
+
+`--agents` adds types; it does not exclude built-ins or discovered agents. A main agent
+launched with `--agent` can restrict allowed types through tools such as
+`Agent(worker,researcher)`; this does not itself restrict nested types.
+To disable nesting, use `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1` when supported, or withhold
+`Agent` from child tool sets.
+
+`CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS` bounds ordinary Agent spawns in supported versions,
+but is not a universal hard concurrency cap: ultracode is exempt, resumes can exceed it, and
+workflows/teams have separate limits. Do not use it alone for an exact overall worker ceiling.
+If exact per-spawn approval or hard overall bounds are required, omit `Agent` and launch
+separately checked processes. Agent teams are experimental; enable them only within existing
+authority and the workspace rule above.
+
+## Stop conditions
+
+Stop or decline to resume when the worker needs unapproved actions, cannot preserve required
+isolation, repeats without new evidence, exhausts the deadline/retry budget, or encounters a
+required approval the supervisor cannot surface. Preserve enough output for diagnosis and report
+the specific blocker.
+
+Official sources: [agent view and lifecycle](https://code.claude.com/docs/en/agent-view),
+[environment controls](https://code.claude.com/docs/en/env-vars),
+[subagents](https://code.claude.com/docs/en/sub-agents), and
 [worktrees](https://code.claude.com/docs/en/worktrees).

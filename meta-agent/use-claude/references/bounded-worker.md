@@ -1,107 +1,85 @@
-# Bounded print-mode worker
+# Bounded worker
 
-Use `claude -p` for a finite assignment with a defined result and no need for live steering. Build
-the prompt from [../assets/worker-contract.md](../assets/worker-contract.md), and apply the trust and
-prompt rules in [invocation-safety.md](invocation-safety.md).
+Use a finite, non-interactive process when the task needs a result and no live steering.
+Complete [invocation preflight](invocation-safety.md) and scale the
+[worker contract](../assets/worker-contract.md) to the assignment.
 
-Before launch, resolve and record the full approval envelope from the contract. Do not send the
-prompt if user/task authorization or any required parent-runtime tool or sandbox approval is denied,
-unknown, or unavailable. Claude permission and tool flags constrain an approved call; they do not
-authorize it.
+## Invocation
 
-## Invocation shape
+Build an argument list with the host's process API and send the contract on stdin. The examples
+below define argument contents, not shell commands. If a shell is necessary, quote each argument
+for that shell and transport the prompt separately. Use an explicit process cwd.
 
-This is a semantic pattern, not a copy-paste wrapper. Translate it for the host shell and omit or
-replace options absent from installed help:
+Minimal read-only, single-worker consultation; `budget_usd` is chosen for this task:
 
-```text
-claude -p
-  --model <model>
-  --effort <effort>
-  --permission-mode <mode>
-  --permission-prompts none
-  --tools <required-built-in-tools>
-  [--allowedTools <pre-approved-rules>]
-  --output-format json
-  --json-schema <result-schema>
-  --max-budget-usd <ceiling>
-  [--no-session-persistence]
-  < <prompt-file>
+```python
+argv = [
+    "claude", "-p",
+    "--restricted", "--strict-mcp-config",
+    "--permission-mode", "plan",
+    "--permission-prompts", "none",
+    "--tools", "Read,Grep,Glob",
+    "--disallowedTools", "mcp__*",
+    "--output-format", "json",
+    "--max-budget-usd", str(budget_usd),
+    "--no-session-persistence",
+]
 ```
 
-Use `--permission-prompts none` only when supported and only for an unattended call. Choose
-`--max-budget-usd` from the task's value and risk rather than applying a universal ceiling. Enforce
-a separate parent-runtime wall-clock timeout: a spend ceiling is not a time limit.
+Use the resolved executable path in place of `claude`. Apply `--model <verified-model>`
+and supported `--effort <level>` overrides when selection requires them. Use the flags
+confirmed in installed help; `--permission-prompts none` requires v2.1.259 or later.
+If unsupported, verify an unattended equivalent such as a suitably restricted `dontAsk`
+configuration, or stop when the contract requires a control that cannot be supplied.
 
-Decide persistence before launch. Add `--no-session-persistence` when the contract is one-shot or
-contains sensitive context and no resume is needed. Otherwise retain `session_id` deliberately and
-use `--resume` only for an in-scope follow-up. Do not assume the new call preserves launch-time
-restrictions; verify the effective contract and installed resume behavior.
+For supplied-text work, `--tools ""` can disable built-in tools. For authorized edits and
+tests, explicitly add required edit/command tools, use the appropriate permission mode, and
+pre-approve only necessary actions. `--tools` does not pre-approve commands. Do not restore
+command tools removed by restricted mode without the required host containment.
 
-A resume is another model call. Recheck approval before sending it, and obtain fresh authorization
-and parent-runtime approval first if its prompt or effective capability materially expands the
-approved envelope.
+For internal delegation, add `Agent` only after the
+[child checks](supervised-sessions.md#internal-delegation). Use `--safe-mode` for untrusted
+discovered customization when appropriate; it disables custom `--agents` definitions.
 
-## Least-privilege shapes
+`--json-schema` takes schema JSON text, not a filename. Read the schema in the parent and
+pass its contents as one argument. For streaming, use `--output-format stream-json --verbose`;
+add `--include-partial-messages` only when token-level updates are useful.
 
-For repository investigation, expose only read/search tools when the installed tool names support
-that boundary. For implementation, add edit tools and only the exact command capability needed for
-authoritative checks. Treat tool availability and permission pre-approval as separate decisions.
-Pair restricted mode with a minimal explicit tool set only when adding a removed tool is justified.
-When `dontAsk` work needs a command or another non-read-only action, pre-approve only the exact
-rule required; listing a tool in `--tools` does not itself approve its use.
+## Limits and persistence
 
-Omit `Agent` by default. If the approved envelope permits autonomous Claude-managed subagents,
-include the installed `Agent` tool explicitly; an allowlist that contains only read/search tools
-silently prevents delegation. A read-only shape is:
+Establish a parent-runtime deadline and finite retry bound before dispatch. A tool yield interval
+does not terminate the process. Track owned child work as well as the main process; preserve partial
+output when stopping. A prompt budget is behavioral guidance, not spending enforcement.
 
-```text
-claude -p
-  --restricted
-  --strict-mcp-config
-  --permission-mode plan
-  --permission-prompts none
-  --tools "Read,Grep,Glob,Agent"
-  --disallowedTools "mcp__*"
-  < <prompt-file>
-```
+Set `--max-budget-usd` from the task's value and existing spending authority. This print-mode
+control is a stopping threshold, not a guaranteed provider billing cap; spend can occur before the
+next check. If a strict no-overshoot ceiling is required, verify an adequate provider/runtime limit
+or report the unsupported requirement before dispatch.
 
-Use only options confirmed for the installed version. For an untrusted workspace, `--safe-mode`
-can disable discovered instructions and customizations while retaining built-in subagents; pass
-required trusted instructions explicitly. It also disables custom agents, including definitions
-provided with `--agents`, so do not combine those modes.
-
-When named specialists materially improve the task, omit `--safe-mode`, address untrusted workspace
-content with compatible installed controls and parent-runtime containment, and define a bounded
-read-only set with `--agents <trusted-json>`. Include each child's purpose, tools, model, turn limit,
-and output obligation. Where supported,
-`--append-subagent-system-prompt <shared-child-constraints>` can reinforce constraints common to
-every child. Defining agents does not enable delegation by itself: the parent still needs `Agent`.
-Require the parent to reconcile child findings rather than forwarding their verdicts.
-
-`--agents` bounds which named definitions are available; it does not enforce spawn count. Prompted
-child-count and concurrency limits are advisory unless a verified hook, permission handler, or
-runtime control enforces them. If exact per-spawn approval is required, omit `Agent` and have the
-invoking agent launch separately approved Claude processes instead.
+Keep `--no-session-persistence` for one-shot work. Omit it deliberately when follow-up requires
+durable resume state; capture the exact session ID. See [supervised sessions](supervised-sessions.md).
 
 ## Result handling
 
-The parent runtime must capture stdout, stderr, and the process exit status separately. Apply these
-checks in order:
+Capture stdout, stderr, and process exit status separately. A nonzero exit, failed/incomplete turn,
+interrupted stream, deadline termination, or exhausted budget is incomplete even when useful text
+appears. Validate the CLI completion signal before accepting the worker's answer.
 
-1. Fail or diagnose a non-zero process status; do not accept a plausible-looking partial stdout.
-2. Parse the complete JSON envelope, or the final `result` event for `stream-json`.
-3. When `--json-schema` is used, consume `structured_output`, not prose from `result`.
-4. Treat a non-empty `mcp_server_errors` array as a failed dependency when the contract relies on
-   MCP. Invalid MCP entries can otherwise be skipped while the run exits successfully.
-5. Record `session_id`, usage, `total_cost_usd`, and per-model cost data when present. Cost fields
-   are client-side estimates, not billing truth.
-6. Compare the artifact and evidence with the worker contract, inspect all diffs, and run independent
-   acceptance checks.
+Parse the complete JSON envelope, or the final `result` event for `stream-json`.
+Check subtype, `is_error`, and error details. When using `--json-schema`, extract and validate
+`structured_output`, not prose from `result`. Missing structured output is incomplete.
 
-For streamed work, parse newline-delimited events and distinguish intermediate subagent messages
-from the final result. A timeout or interrupted stream is incomplete even if useful text appeared.
-Report stderr warnings without exposing secrets.
+Treat `mcp_server_errors` as a dependency failure when the task requires those servers.
+Retain `session_id`, usage, `total_cost_usd`, and per-model costs when available; cost fields
+are client estimates. Distinguish intermediate child messages from the main final result.
 
-Official references: [Run Claude Code programmatically](https://code.claude.com/docs/en/headless)
-and [create custom subagents](https://code.claude.com/docs/en/sub-agents).
+For a plain consultation, concise prose with a successful completion check is enough. When a
+structured handoff is needed, use [result.schema.json](../assets/result.schema.json); validate the
+extracted object again in the parent before acting. Its task status is separate from CLI success:
+a successful model call may correctly report a blocked task.
+
+Compare the result with the contract. Inspect edits, including untracked files, and run appropriate
+acceptance checks independently. Do not infer that commands ran or artifacts are correct from a
+plausible final message. Report skipped checks and stderr warnings without exposing secrets.
+
+Official source: [programmatic usage](https://code.claude.com/docs/en/headless).
