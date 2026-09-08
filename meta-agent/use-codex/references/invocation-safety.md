@@ -1,98 +1,110 @@
 # Invocation safety
 
-Read this before launching Codex. Confirm every option against the installed CLI and relevant
-subcommand help.
+Read for initial execution setup; revisit when the executable, configuration, trust, capabilities,
+or provider changes. Confirm required controls against installed help and version-compatible official
+documentation. Help can omit supported options. Keep a required control, use a verified equivalent,
+or stop; optional conveniences may be omitted.
 
 ## Preflight
 
-Use the host's executable lookup, then check:
+Record a concise outcome for each applicable check below. Use read-only inspection, not model
+prompts or destructive permission probes.
 
-```text
-codex --version
-codex login status
-codex --help
-codex exec --help
-codex exec resume --help       # when resuming
-```
-
-Do not expose credentials while diagnosing authentication. Inspect repository instructions,
-revision, dirty state, applicable user/project configuration, hooks, plugins, skills, MCP servers,
-rules, and trust settings before giving Codex access.
-
-## Approval preflight
-
-Before any model prompt or internal child spawn, record and resolve:
-
-- working directory, revision, and in-scope paths;
-- read-only or write authority and workspace isolation;
-- allowed commands, network access, external systems, and credential exposure;
-- model and reasoning effort;
-- whether Codex subagents are allowed, their enforced concurrency, and ownership boundaries;
-- wall-clock/cost limits, retry count, and session persistence.
-
-User/task authorization, parent-runtime approval, and Codex controls are independent. Use the
-parent runtime's native approval prompt when one exists; a chat confirmation does not replace a
-required tool or sandbox approval. Fail closed when required approval is unavailable or unclear.
-
-Adapt this into the runtime's native approval message:
-
-```text
-Allow the local Codex CLI to run <bounded task> in <directory> at <revision> using
-<model>/<effort>? It may <read/write/commands/network>. Codex subagents: <disabled, or enabled with
-enforced concurrency and the same scope>. Limits: <time/cost/retries/persistence>. It will not
-<commits/pushes/destructive actions/external mutations/other exclusions>.
-```
-
-Any expansion in scope, writes, commands, network, external access, model/effort, subagents,
-concurrency, cost/time, or persistence requires a new checkpoint before a follow-up or resume.
-
-## Native controls
-
-Prefer explicit values on every call:
-
-| Intent | Codex controls |
+| Check | Sufficient evidence before dispatch |
 |---|---|
-| Read-only unattended inspection | `--sandbox read-only -c approval_policy=\"never\"` |
-| Read-only monitored work | `--sandbox read-only -c approval_policy=\"on-request\"` |
-| Authorized unattended workspace edits | `--sandbox workspace-write -c approval_policy=\"never\"` |
-| Authorized monitored workspace edits | `--sandbox workspace-write -c approval_policy=\"on-request\"` |
-| Model selection | `--model <supported-model>` |
-| Reasoning effort | `-c model_reasoning_effort=\"<supported-effort>\"` |
+| Authority | The user's request and existing approvals cover the intended actions; native runtime approval is granted or not required. |
+| Execution context | Resolved executable/version, process cwd, OS user, provider/auth route, relevant environment and credential-store access. Record variable names or status, never secrets. |
+| Workspace | In Git: revision, dirty state, applicable instructions, and writer ownership. Outside Git: verified directory and supplied inputs; revision/branch fields are not applicable. |
+| Capabilities | Explicit launch controls plus the applicable configuration/policy layers that can alter the required tools, roots, network, hooks, or external access. Check only capabilities relevant to this launch. |
+| Limits | Deadline controller, retry bound, persistence choice, and an enforcement mechanism for each limit the contract requires to be hard. |
+| Children | When enabled: supported child controls, shared/differing auth context, allowed tools, ownership, and isolated workspaces for writers. |
+
+Before each model dispatch or resume, perform the authentication check for the selected route below.
+Reuse unchanged version, trust, and configuration evidence; recheck a differing child context.
+If the sandbox cannot access the normal credential store, diagnose through an authorized execution
+path. A sandbox-only failure does not prove the user's login is invalid.
+
+Distinguish behavioral scope from enforced boundaries. A contract can define the question or files
+to work on; a required filesystem/network/tool restriction needs evidence from the runtime or
+documented CLI control. Intended flags alone do not override managed policy. If a required boundary
+cannot be established, narrow to an already authorized capability set or report the specific gap.
+This is not a requirement to audit unrelated configuration or prove every possible worker action safe.
+
+## Authentication
+
+Use `codex --version` and relevant `--help` commands to establish the installed interface.
+Resolve the selected provider from launch flags/profile/configuration before choosing an auth check.
+
+- For stored OpenAI account or API-key login, run `codex login status` through the same
+  execution path and credential context as the worker; require successful status.
+- For a provider using its own environment credential, federation, or credential helper, verify
+  the documented credential source and its availability without printing its value. Use a
+  provider-native non-generating status check when available. OpenAI login status is not evidence
+  for this route.
+- For a deliberately unauthenticated local provider, such as an authorized `--oss` setup,
+  verify the selected endpoint and local model/service availability without generation. Record
+  authentication as not required; do not demand an OpenAI login.
+
+A credential's presence or local login record does not prove remote validity or model entitlement.
+If the route has no non-generating validity check, record that limitation; the first authorized,
+bounded task call may establish remote access. Do not add a separate paid probe. Stop on an
+authentication error instead of retrying indefinitely.
+
+## Workspace and controls
+
+Inspect applicable repository instructions and the configuration layers that affect required
+controls: user/project/profile settings, managed policy, extra roots, exec rules, hooks, plugins,
+and MCP/tools. Record the relevant overrides. A shell sandbox does not by itself restrict every
+MCP action or external service.
+
+| Intent | Control |
+|---|---|
+| Unattended read-only work | `--sandbox read-only` and config argument `approval_policy="never"` |
+| Unattended workspace edits | `--sandbox workspace-write` and config argument `approval_policy="never"` |
+| Monitored permission requests | Config argument `approval_policy="on-request"`, only with a channel that can answer native prompts |
 | Disable internal subagents | `-c agents.enabled=false` |
-| Bound internal concurrency | `-c agents.max_concurrent_threads_per_session=<n>` |
+| Additional writable root | `--add-dir <path>`, only within authorized scope |
 
-`approval_policy=never` means Codex never pauses; it does not grant blocked capabilities. Use it for
-unattended runs only with a sandbox that already expresses the complete approved envelope.
-`approvals_reviewer=auto_review` delegates eligible approval decisions to another model and is not
-equivalent to user approval or expanded authorization.
+The string-valued config examples above show argument contents: the double quotes belong to TOML;
+backslashes do not. See the executable argument-list example in [bounded workers](bounded-worker.md).
+`approval_policy=never` denies blocked capabilities; it does not grant them. Automatic approval
+review is not new user authority. If non-interactive approval cannot be serviced, use already
+authorized controls with `never` or return the blocker.
 
-Some releases expose `--ask-for-approval` only before the subcommand while others document it with
-`exec`. The repeatable `-c approval_policy=\"...\"` override is less sensitive to flag position;
-still confirm it in installed help before use.
+Workspace-write still protects `.git` (including resolved worktree Git directories), `.agents`,
+and `.codex` within writable roots. For authorized commits or configuration edits, verify a native
+permission route that covers those writes, or let the invoking agent perform them after checking
+the worker's changes. Do not assume workspace-write with `never` grants protected-path access.
 
-Never use `--dangerously-bypass-approvals-and-sandbox`/`--yolo`, `danger-full-access`,
-`--dangerously-bypass-hook-trust`, or `--ignore-rules` merely to avoid a prompt. If an exceptional
-workflow explicitly requires one, obtain specific user and runtime approval and require independent
-external containment. Prefer narrow writable roots, network settings, or exec-policy rules.
+Use `--strict-config` when unknown configuration must fail; otherwise inspect compatibility
+without requiring unrelated stale settings to block the task. `--ignore-user-config` can remove
+required defaults as well as unwanted customization, so inspect its consequences first.
+Do not use bypass flags, `danger-full-access`, or `--ignore-rules` merely to avoid a prompt.
+An exceptional bypass requires specific user/runtime authority and independent external containment.
 
-Non-interactive approval prompts may not be serviceable in the parent runtime. After the complete
-envelope is approved up front, prefer `approval_policy=never` so out-of-envelope actions fail and
-return control to the orchestrator. Use `on-request` only when the process is actively supervised
-through a channel that can present and answer native Codex prompts.
+Outside Git, use a verified safe directory and add `--skip-git-repo-check`. Keep sandbox and
+approval restrictions intact. Do not initialize a repository or modify trust settings just to ask
+a supplied-text question.
 
-Do not use `--ignore-user-config` casually: it can improve reproducibility, but may also remove
-required safe defaults. Conversely, loaded configuration can add tools, MCP servers, hooks, or
-instructions. Inspect the effective layers and use `--strict-config` where configuration drift must
-fail rather than degrade silently.
+## Approval and prompt transport
 
-## Prompt transport and secrets
+Existing authorization does not need another confirmation. Use the parent runtime's native approval
+mechanism only when required; a chat confirmation does not replace sandbox/tool approval. A material
+expansion beyond existing authority needs authorization before the next action. A routine in-scope
+model choice, follow-up, or previously authorized write is not automatically an expansion.
 
-Never interpolate untrusted code, logs, or Markdown into shell-quoted command text. Send the worker
-contract through the parent runtime's safe stdin facility or a securely created temporary file.
-Keep prompt and result files outside tracked paths, restrict access where supported, and remove them
-after use. Do not place real secrets in prompts. Give Codex only credentials required by the task,
-and avoid running untrusted repository code in a process environment containing credentials.
+When native approval is needed, describe the concrete task, directory, permitted actions, provider,
+model, relevant child permissions, limits, and exclusions. Do not request a reusable executable or
+command-prefix approval broader than the task requires.
 
-Official references: [command reference](https://developers.openai.com/codex/cli/reference),
-[configuration reference](https://developers.openai.com/codex/config-reference), and
-[agent approvals and security](https://developers.openai.com/codex/agent-approvals-security).
+Never interpolate code, logs, or Markdown into shell command text. Send the contract through a safe
+stdin facility or a securely created, access-restricted prompt file. Keep temporary files outside
+tracked paths, remove them when no longer needed, and do not place real secrets in prompts. Avoid
+running untrusted repository code in an environment containing credentials. Worktrees and CLI tool
+policies are not substitutes for host containment when untrusted code requires it.
+
+Official sources: [CLI reference](https://developers.openai.com/codex/cli/reference),
+[configuration](https://developers.openai.com/codex/config-reference),
+[authentication](https://developers.openai.com/codex/auth), and
+[non-interactive mode](https://developers.openai.com/codex/non-interactive-mode).
+See also [protected paths](https://developers.openai.com/codex/agent-approvals-security#protected-paths-in-writable-roots).

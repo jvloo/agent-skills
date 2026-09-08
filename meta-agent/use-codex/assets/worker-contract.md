@@ -1,56 +1,60 @@
-# Codex worker contract
+# Worker contract
 
-Adapt this template before invoking `codex exec`. Remove unused sections and replace every
-placeholder. Do not send unresolved placeholders to the model.
+Use this template for complex work. For a simple consultation, keep objective, relevant inputs,
+allowed actions, output, and limits. Record existing authorization; these fields are not a user
+questionnaire. Remove unused sections and replace placeholders before dispatch.
 
-```text
-ROLE
-You are a bounded Codex CLI worker reporting to an orchestrating agent.
+## Objective and acceptance
 
-OBJECTIVE
-<single concrete outcome>
+- Objective: <one bounded outcome>
+- Done when: <observable acceptance criteria>
+- Required artifact or answer: <deliverable>
 
-DONE WHEN
-- <observable completion condition>
-- <required evidence or validation>
+## Context and ownership
 
-CONTEXT
-- Working directory: <path>
-- Repository revision: <commit/branch plus dirty-state note>
-- Primary sources: <paths, commands, or documents>
+- Working directory: <absolute or runtime-resolved path>
+- Repository revision and starting state: <ref, commit, user changes; or not applicable>
+- Relevant sources and applicable instructions: <paths, URLs, or supplied evidence>
+- In-scope paths, questions, and systems: <scope>
+- Worker owns: <bounded investigation or artifact>
+- Invoking agent owns: <integration, acceptance, and external communication>
 
-SCOPE AND AUTHORITY
-- In scope: <paths/systems/actions>
-- Access: <read-only or explicitly authorized writes>
-- Commands: <allowed categories>
-- Network/external systems: <none or explicit allowance>
-- Excluded: commits, pushes, PR changes, destructive actions, secret disclosure, and <other>
+## Authority and execution
 
-EXECUTION PROFILE
-- Model and reasoning effort: <chosen and verified>
-- Internal subagents: <disabled, or roles plus enforced concurrency>
-- Isolation: <sandbox and worktree/process boundary>
-- Limits: <wall-clock, cost/usage, retries, persistence>
+- Existing user/task authorization: <approved actions and explicit exclusions>
+- Authentication evidence: <provider route, status or credential-source check; no secrets>
+- Required capability evidence: <preflight results and relevant configuration/containment>
+- Parent-runtime approval: <native approval reference, or not required>
+- Worker controls: <permission/sandbox mode, tools, relevant configuration sources>
+- Allowed actions and directories: <reads, edits, commands, and minimum roots>
+- Network and external systems: <allowed targets and authorized mutations, or none>
+- Secrets: <required credential mechanism and data that must not enter prompts or output>
 
-METHOD
-1. Inspect repository instructions and current state.
-2. Gather primary evidence before conclusions or edits.
-3. Stay within scope and make the smallest defensible change if writes are allowed.
-4. Run the agreed validation.
-5. Stop and report instead of expanding authority.
+Do not infer permission to commit, publish, perform destructive actions, or access additional
+systems. Perform such actions only when this contract includes existing authorization and the
+runtime permits them. If required approval is denied or unavailable, report the blocker through
+the invoking agent.
 
-OUTPUT
-- Outcome or findings, ordered by importance.
-- Evidence with files/symbols/commands.
-- Files changed, if any.
-- Checks run and exact pass/fail status.
-- Uncertainty, skipped checks, and blockers.
-- No commit or publication unless explicitly authorized.
+## Evidence and output
 
-STOP CONDITIONS
-- Required access exceeds the approved envelope.
-- Revision or workspace state no longer matches the contract.
-- Isolation cannot be maintained.
-- A destructive, secret-bearing, external, or irreversible action would be needed.
-- The time/cost/retry limit is reached.
-```
+- Evidence: <file/symbol findings, diffs, command results, or source links>
+- Checks: <authoritative validations appropriate to the task>
+- Output: <concise prose or the sibling result.schema.json when structured handoff is needed>
+- Include uncertainties, skipped checks, and blockers; do not claim unverified completion.
+
+## Limits and supervision
+
+- Model and effort: <verified selection>
+- Cost/usage limit: <behavioral target, stopping threshold, or enforced ceiling; identify which>
+- Wall-clock deadline and controller: <limit, ownership, child-work cleanup>
+- Retry limit: <count and retryable conditions>
+- Internal subagents: <disabled, or purposes, ownership, models, tools, and isolation>
+- Child concurrency/depth: <targets and enforcement for any required exact limits>
+- Persistence: <none, resume, or supervised background>
+
+## Stop conditions
+
+Stop and report when required evidence or capability is unavailable, a required control cannot be
+enforced, an action would exceed authorization, unexpected workspace changes invalidate the agreed
+inputs, or the time/cost/retry limit is reached. Expected edits by this worker do not invalidate the
+starting-state record. Return unresolved material conflicts to the invoking agent.

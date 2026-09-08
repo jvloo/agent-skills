@@ -9,6 +9,10 @@ Contributions that make these skills safer, more portable, or more effective are
 - Confirm CLI behavior against installed help and current first-party documentation.
 - Prefer concise decision guidance over copied manuals or machine-specific command recipes.
 - Never include credentials, local absolute paths, private repository details, or transcript data.
+- Keep the two meta-agent skills aligned: the same entrypoint workflow, reference structure,
+  shared rules, worker contract, and result schema. Differences belong in provider-specific
+  commands, capabilities, authentication, lifecycle handling, and curated model recommendations.
+  Keep each copied skill self-contained.
 
 ## Making a change
 
