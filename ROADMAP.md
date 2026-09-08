@@ -11,10 +11,19 @@ general prompting.
 
 ### Meta-agent
 
-- `use-claude`: bounded Claude Code CLI delegation and supervision.
-- `use-codex`: bounded Codex CLI/GPT delegation, supervision, and optional subagents.
-- Shared principles for approval preflight, least privilege, isolation, worker contracts, and
-  independent verification.
+- `use-claude` and `use-codex`: local CLI consultations, bounded delegation, supervised sessions,
+  and internal subagents when the task benefits from them.
+- Matching entrypoints and reference structure, byte-identical worker contracts and result
+  schemas, and shared authentication-preflight, authority, isolation, and verification policies.
+- Provider-specific commands, authentication routes, lifecycle controls, and curated model
+  recommendations under one selection policy: explicit choice, verified defaults, then justified
+  adjustments.
+- Documented installation paths, synchronization checks, and contribution requirements. The
+  skills have undergone structural checks and scenario-based plan evaluation; repeatable fixtures
+  and live lifecycle verification remain to be added.
+
+The repository currently publishes source on `main`, with no tagged release. See
+[CHANGELOG.md](CHANGELOG.md) for the initial import and subsequent changes.
 
 ## Expansion areas
 
@@ -36,11 +45,13 @@ category directories will not be added in advance.
 
 ## Near-term
 
-- Add realistic forward tests for the existing `use-claude` and `use-codex` skills.
+- Check in repeatable forward-test fixtures for both skills, building on the initial scenario
+  evaluation; cover authorized writes, custom/local providers, non-Git work, and concurrent writers.
+- Verify live resume, steering, and child-work cancellation in controlled environments when the
+  required runtime access and model usage are authorized.
 - Track worker-CLI capability drift without hard-coding one machine, version, model, or shell.
-- Define a consistent quality and release bar for all skill categories.
-- Improve installation and discovery guidance for common agent runtimes while keeping skills
-  runtime agnostic.
+- Automate the documented quality checks and define compatibility evidence for the first release.
+- Keep installation and discovery guidance current as host runtimes evolve.
 - Identify the next reusable skills from Xavier's working agentic workflows.
 
 ## Candidate meta-agent skills
@@ -59,7 +70,8 @@ separate context.
 
 ## Repository-wide infrastructure
 
-- Portable schemas for worker results, evidence, verification, and unresolved risk.
+- Build on the shared worker-result schema when new categories need additional evidence or
+  handoff formats; avoid adding schemas without a concrete consumer.
 - Reusable evaluation fixtures that do not depend on private repositories or credentials.
 - Compatibility notes derived from installed tool behavior and first-party documentation.
 - Lightweight release automation after the structure and validation contract stabilize.
