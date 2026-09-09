@@ -18,7 +18,8 @@ Contributions that make these skills safer, more portable, or more effective are
 ## Making a change
 
 1. Create a focused branch from `main`.
-2. Edit the relevant skill and supporting artifacts. Apply shared behavior changes to both
+2. Keep installable skills under `skills/<category>/<skill-name>/`; keep evaluation reports in
+   `evals/` and automated tests in `tests/`. Edit the relevant skill and supporting artifacts. Apply shared behavior changes to both
    meta-agent skills; keep provider-specific changes in the appropriate references.
 3. Verify relative links, examples, and the shared-file checks below; run `git diff --check`.
 4. Run a compatible Agent Skills validator against every changed skill. For repository-docs-only
@@ -47,8 +48,8 @@ Useful checks from the repository root are:
 
 ```sh
 git diff --check
-diff -u meta-agent/use-claude/assets/worker-contract.md meta-agent/use-codex/assets/worker-contract.md
-diff -u meta-agent/use-claude/assets/result.schema.json meta-agent/use-codex/assets/result.schema.json
+diff -u skills/meta-agent/use-claude/assets/worker-contract.md skills/meta-agent/use-codex/assets/worker-contract.md
+diff -u skills/meta-agent/use-claude/assets/result.schema.json skills/meta-agent/use-codex/assets/result.schema.json
 python3 -m unittest discover -s tests -v
 ```
 

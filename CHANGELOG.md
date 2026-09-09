@@ -74,6 +74,10 @@ job journal has its own format version. The earlier 0.1.0 preparation below was 
 
 ### Repository maintenance
 
+- Move `meta-agent/` to `skills/meta-agent/`, keeping future skill categories separate from
+  repository-level `evals/` and `tests/`. Update documentation and test paths; installed skill
+  contents and versions are unchanged.
+
 - Adopt independent skill versions and `<skill-name>/v<version>` release tags.
 - Remove the root version file; keep one changelog with skill-specific release entries.
 - Validate each helper against its own skill version while allowing versions to diverge.

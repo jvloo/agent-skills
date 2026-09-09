@@ -6,7 +6,7 @@ import re
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-SKILLS = [ROOT / "meta-agent" / name for name in ("use-claude", "use-codex")]
+SKILLS = [ROOT / "skills" / "meta-agent" / name for name in ("use-claude", "use-codex")]
 
 
 class PackageTests(unittest.TestCase):

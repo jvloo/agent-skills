@@ -1,7 +1,7 @@
 # Roadmap
 
 This repository is Xavier Loo's evolving collection of agent skills for his practical agentic
-workflow. `meta-agent/` is the first category, not the repository's overall boundary.
+workflow. `skills/meta-agent/` is the first category, not the repository's overall boundary.
 
 The roadmap communicates direction, not delivery commitments. A workflow should become a published
 skill only when it is repeatable, useful beyond one private project, and measurably better than
