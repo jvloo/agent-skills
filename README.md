@@ -118,8 +118,10 @@ automatic recovery; this does not promise exactly-once edits or full host-crash 
 ## Project status
 
 No tagged release has been published yet. The [changelog](CHANGELOG.md) records changes since
-the initial import. Structural and deterministic lifecycle tests are repeatable; live provider
-resume/cancellation and measured model-quality comparisons remain separate verification work.
+the initial import. The [recoverable-job evaluation](evals/2026-09-09-recoverable-jobs.md) records
+29 passing fixture tests, fresh-context recovery checks, and live Claude/Codex client-loss recovery,
+exact-session resume, and bounded edits. Live interruption during generation followed by resume,
+additional platforms, and measured model-quality comparisons remain verification work.
 See [CONTRIBUTING.md](CONTRIBUTING.md) and the [roadmap](ROADMAP.md).
 
 ## Contributing
