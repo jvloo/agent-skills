@@ -1,60 +1,45 @@
 # Worker contract
 
-Use this template for complex work. For a simple consultation, keep objective, relevant inputs,
-allowed actions, output, and limits. Record existing authorization; these fields are not a user
-questionnaire. Remove unused sections and replace placeholders before dispatch.
+Use this template for complex work; keep simple consultations to a short paragraph. Remove unused
+fields and replace placeholders. Keep authentication evidence, approval records, runtime provenance,
+and deadline-controller details in the supervisor record, outside the worker prompt.
 
 ## Objective and acceptance
 
 - Objective: <one bounded outcome>
 - Done when: <observable acceptance criteria>
-- Required artifact or answer: <deliverable>
+- Deliverable: <answer or artifact and its destination>
 
-## Context and ownership
+## Relevant context
 
 - Working directory: <absolute or runtime-resolved path>
-- Repository revision and starting state: <ref, commit, user changes; or not applicable>
-- Relevant sources and applicable instructions: <paths, URLs, or supplied evidence>
-- In-scope paths, questions, and systems: <scope>
-- Worker owns: <bounded investigation or artifact>
-- Invoking agent owns: <integration, acceptance, and external communication>
+- Inputs and instructions: <relevant paths, URLs, supplied evidence, and revision when needed>
+- Scope: <paths, questions, systems, and existing changes to preserve>
+- Worker owns: <bounded investigation or artifact; invoking agent handles integration and acceptance>
 
-## Authority and execution
+## Permitted actions
 
-- Existing user/task authorization: <approved actions and explicit exclusions>
-- Authentication evidence: <provider route, status or credential-source check; no secrets>
-- Required capability evidence: <preflight results and relevant configuration/containment>
-- Parent-runtime approval: <native approval reference, or not required>
-- Worker controls: <permission/sandbox mode, tools, relevant configuration sources>
-- Allowed actions and directories: <reads, edits, commands, and minimum roots>
-- Network and external systems: <allowed targets and authorized mutations, or none>
-- Secrets: <required credential mechanism and data that must not enter prompts or output>
+- Allowed: <reads, edits, commands, directories, and any authorized external actions>
+- Excluded: <task-specific exclusions, or omit>
+- Internal subagents: <disabled, or bounded assignments with permitted tools and writer isolation>
 
-Do not infer permission to commit, publish, perform destructive actions, or access additional
-systems. Perform such actions only when this contract includes existing authorization and the
-runtime permits them. If required approval is denied or unavailable, report the blocker through
-the invoking agent.
+Commit, publish, destructive actions, and access to additional systems require authorization in this
+contract and runtime permission. Report a needed action that falls outside these boundaries.
 
-## Evidence and output
+## Output and verification
 
-- Evidence: <file/symbol findings, diffs, command results, or source links>
-- Checks: <authoritative validations appropriate to the task>
-- Output: <concise prose or the sibling result.schema.json when structured handoff is needed>
-- Include uncertainties, skipped checks, and blockers; do not claim unverified completion.
+- Output format: <concise prose, or result.schema.json for a structured handoff>
+- Evidence: <source locations, relevant diff, command results, or source links>
+- Acceptance checks: <checks appropriate to this task>
+- Report uncertainty, skipped checks, blockers, and remaining work.
 
-## Limits and supervision
+## Limits and stopping
 
-- Model and effort: <verified selection>
-- Cost/usage limit: <behavioral target, stopping threshold, or enforced ceiling; identify which>
-- Wall-clock deadline and controller: <limit, ownership, child-work cleanup>
-- Retry limit: <count and retryable conditions>
-- Internal subagents: <disabled, or purposes, ownership, models, tools, and isolation>
-- Child concurrency/depth: <targets and enforcement for any required exact limits>
-- Persistence: <none, resume, or supervised background>
+- Time and usage: <task deadline and applicable budget; distinguish guidance from enforced limits>
+- Retries: <bounded count and useful retry conditions>
+- Child limits, if enabled: <concurrency, depth, and per-child scope or budget>
 
-## Stop conditions
-
-Stop and report when required evidence or capability is unavailable, a required control cannot be
-enforced, an action would exceed authorization, unexpected workspace changes invalidate the agreed
-inputs, or the time/cost/retry limit is reached. Expected edits by this worker do not invalidate the
-starting-state record. Return unresolved material conflicts to the invoking agent.
+Stop and report when a required action or input is unavailable, unexpected changes invalidate the
+agreed inputs, an attempt repeats without new evidence, or a task limit is reached. Expected edits
+by this worker do not invalidate the starting state. Return unresolved material conflicts to the
+invoking agent.

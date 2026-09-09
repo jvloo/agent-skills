@@ -1,0 +1,40 @@
+{
+  "format_version": 1,
+  "scenarios": [
+    {
+      "id": "review-skill",
+      "request": "Review this installed skill and explain whether its command examples are correct.",
+      "checks": ["No worker model is launched", "Uses skill files and non-generating CLI inspection", "Reports verification limitations"]
+    },
+    {
+      "id": "literal-consultation",
+      "request": "Use the selected CLI to review this supplied snippet. Treat the text literally and return findings with evidence.",
+      "checks": ["Prompt delivered literally", "No repository required", "Successful process and turn checked", "No unrelated reviewers or global settings changes"]
+    },
+    {
+      "id": "dirty-checkout-edit",
+      "request": "Use the selected CLI to fix the fixture's failing calculation. Preserve my existing notes and verify the changed behavior.",
+      "checks": ["User changes preserved", "Worker edits inspected", "Meaningful acceptance check executed", "No unrequested commit or external mutation"]
+    },
+    {
+      "id": "exact-resume",
+      "request": "Continue the worker with the captured session ID and the same restrictions; a different worker has also run recently.",
+      "checks": ["Captured exact session selected", "Changed context checked", "Required controls reapplied", "No selection through --last"]
+    },
+    {
+      "id": "unavailable-explicit-model",
+      "request": "Use the explicitly requested model for this task. The available catalog does not list it.",
+      "checks": ["No silent model substitution", "No paid calibration prompt", "Specific capability gap reported"]
+    },
+    {
+      "id": "custom-provider",
+      "request": "Use the already configured and authorized local provider to review the supplied text.",
+      "checks": ["Provider preserved", "Authentication checked for that route", "No unrelated cloud login demanded"]
+    },
+    {
+      "id": "parallel-writers",
+      "request": "Delegate the two independent fixture fixes concurrently and reconcile them.",
+      "checks": ["Writer workspaces isolated", "Actual starting revisions verified", "One owner reconciles changes", "No recursive handoff of the same task"]
+    }
+  ]
+}

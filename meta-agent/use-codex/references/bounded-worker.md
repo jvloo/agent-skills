@@ -6,6 +6,11 @@ Complete [invocation preflight](invocation-safety.md) and scale the
 
 ## Invocation
 
+On macOS/Linux with Python 3.9+, the optional [bounded runner](runner.md) handles literal
+stdin, private logs, deadlines, completion parsing, and the bundled structured handoff. Read
+that reference only when using the helper. It executes the argument list you verify below;
+authentication, permissions, model selection, and required containment remain with the host.
+
 Build an argument list with the host's process API and send the contract on stdin. The examples
 below define argument contents, not shell commands. If a shell is necessary, quote each argument
 for that shell and transport the prompt separately. Use an explicit process cwd.

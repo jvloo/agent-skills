@@ -18,9 +18,12 @@ general prompting.
 - Provider-specific commands, authentication routes, lifecycle controls, and curated model
   recommendations under one selection policy: explicit choice, verified defaults, then justified
   adjustments.
-- Documented installation paths, synchronization checks, and contribution requirements. The
-  skills have undergone structural checks and scenario-based plan evaluation; repeatable fixtures
-  and live lifecycle verification remain to be added.
+- Documented installation paths, synchronized 0.1.0 package metadata, a versioned result protocol,
+  and contribution requirements. A self-contained optional bounded runner and repeatable fake-CLI
+  lifecycle tests cover prompt transport, completion, output validation, deadlines, and cancellation.
+- Dated model evidence distinguishes official guidance, practitioner observations, and locally
+  checked CLI interfaces. Fresh-context scenario definitions and baseline comparison guidance are
+  checked in; live provider lifecycle verification and model-quality measurements remain separate.
 
 The repository currently publishes source on `main`, with no tagged release. See
 [CHANGELOG.md](CHANGELOG.md) for the initial import and subsequent changes.
@@ -45,12 +48,14 @@ category directories will not be added in advance.
 
 ## Near-term
 
-- Check in repeatable forward-test fixtures for both skills, building on the initial scenario
-  evaluation; cover authorized writes, custom/local providers, non-Git work, and concurrent writers.
+- Execute and expand the fresh-context scenarios for authorized writes, custom/local providers,
+  non-Git work, exact-session continuation, and concurrent writers. Compare measured outcomes
+  before making stronger claims about routing quality or instruction improvements.
 - Verify live resume, steering, and child-work cancellation in controlled environments when the
   required runtime access and model usage are authorized.
 - Track worker-CLI capability drift without hard-coding one machine, version, model, or shell.
-- Automate the documented quality checks and define compatibility evidence for the first release.
+- Run the documented quality suite on additional supported Python/platform combinations and
+  collect live compatibility evidence before widening the helper's support claims.
 - Keep installation and discovery guidance current as host runtimes evolve.
 - Identify the next reusable skills from Xavier's working agentic workflows.
 
