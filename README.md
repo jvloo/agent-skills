@@ -78,6 +78,8 @@ Model and effort selection follows explicit choice, verified account/configurati
 a justified task adjustment. Provider recommendations are advisory; consult the
 [Claude guidance](skills/meta-agent/use-claude/references/model-selection.md) or
 [Codex guidance](skills/meta-agent/use-codex/references/model-selection.md) for compatibility and billing.
+The entrypoint keeps the essential workflow; retrieve a reference only to resolve missing or
+changed information. A verified host setup can supply the required evidence directly.
 Choose model capability separately from effort. Dated evidence references distinguish official
 guidance, firsthand practitioner observations, and local compatibility checks. Measure the cost
 and time of an accepted result, including retries and corrections, when adjusting working defaults.
@@ -110,7 +112,7 @@ Both skill directories have the same layout:
 ## Versioning and checks
 
 Each skill is versioned independently in its `SKILL.md` `metadata.version`; both current skills
-are prepared at **0.2.0**. The root [changelog](CHANGELOG.md) records changes by skill and version.
+are prepared at **0.2.1**. The root [changelog](CHANGELOG.md) records changes by skill and version.
 Release tags use `<skill-name>/v<version>`, for example `use-claude/v0.1.0`. Category directories
 are organizational and have no version. See [release guidance](CONTRIBUTING.md#commits-and-releases).
 The worker-result protocol has a separate identity, `urn:jvloo:agent-skills:worker-result:1`;
@@ -137,6 +139,12 @@ the initial import. The [recoverable-job evaluation](evals/2026-09-09-recoverabl
 29 passing fixture tests, fresh-context recovery checks, and live Claude/Codex client-loss recovery,
 exact-session resume, and bounded edits. Live interruption during generation followed by resume,
 additional platforms, and measured model-quality comparisons remain verification work.
+A [token-effectiveness pilot](evals/2026-09-09-token-effectiveness.md) separately compares
+baseline and skill-guided controllers over the same execution harness. The
+[progressive-disclosure follow-up](evals/2026-09-09-progressive-disclosure.md) checks selective
+retrieval and the prepared 0.2.1 descriptions. An
+[identical-controller comparison](evals/2026-09-09-identical-controller.md) separates the effect
+of changing controller pairings from cross-skill token totals.
 See [CONTRIBUTING.md](CONTRIBUTING.md) and the [roadmap](ROADMAP.md).
 
 ## Contributing

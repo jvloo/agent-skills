@@ -2,7 +2,10 @@
 
 Recorded runs: [initial offline validation](2026-09-09.md) and
 [bottom-up live evaluation](2026-09-09-bottom-up.md), and
-[recoverable-job evaluation](2026-09-09-recoverable-jobs.md).
+[recoverable-job evaluation](2026-09-09-recoverable-jobs.md), and
+[token-effectiveness pilot](2026-09-09-token-effectiveness.md), and
+[progressive-disclosure follow-up](2026-09-09-progressive-disclosure.md), and
+[identical-controller comparison](2026-09-09-identical-controller.md).
 
 The deterministic suite uses local fake CLIs; it never calls a model, reads credentials, or
 mutates an external system:
@@ -46,3 +49,10 @@ reports suggest cases to test; they do not establish a default for this user's w
 Promote a change when observed outcomes justify it. Do not infer improvement from shorter files,
 preferred wording, a structural validator, or one successful trial. Keep raw temporary artifacts
 out of the repository; checked-in reports contain only synthetic outcomes and limitations.
+
+## Token-effectiveness comparison
+
+The [opt-in paired evaluator](token_effectiveness/README.md) compares baseline and skill-guided
+controllers over a common CLI broker. It records controller and worker usage, auxiliary model
+tokens, acceptance, elapsed time, reference reads, and errors. It does not measure the recovery
+harness against unsupervised execution or delegation against direct solving.

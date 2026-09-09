@@ -1,8 +1,9 @@
 # Bounded worker
 
-Use a finite, non-interactive process when the task needs a result and no live steering.
-Complete [invocation preflight](invocation-safety.md) and scale the
-[worker contract](../assets/worker-contract.md) to the assignment.
+Read when constructing a finite CLI invocation or interpreting its completion. If the host
+already supplies a verified invocation and parser, use them directly. Resolve missing preflight
+evidence with [invocation safety](invocation-safety.md); use the
+[worker contract](../assets/worker-contract.md) only when the assignment needs its additional structure.
 
 ## Invocation
 

@@ -1,8 +1,10 @@
 # Invocation safety
 
-Read for initial execution setup; revisit when the executable, configuration, trust, capabilities,
-or provider changes. Confirm required controls against installed help and version-compatible official
-documentation. Help can omit supported options. Keep a required control, use a verified equivalent,
+Read when execution setup or its required evidence is unresolved; revisit the relevant section
+when the executable, configuration, trust, capabilities, or provider changes. A verified host
+preflight can supply this evidence without rereading the document.
+
+Confirm required controls against installed help and version-compatible official documentation. Help can omit supported options. Keep a required control, use a verified equivalent,
 or stop; optional conveniences may be omitted.
 
 ## Preflight

@@ -9,6 +9,18 @@ has been published yet; future releases will use [Semantic Versioning](https://s
 
 ## [Unreleased]
 
+### use-claude 0.2.1 / use-codex 0.2.1 (prepared, not released)
+
+#### Changed
+
+- Clarify discovery descriptions around requests for the named local CLI worker.
+- Replace the linked reading sequence with a concise essential workflow and a decision-based
+  reference map. Reuse verified host evidence; retrieve detail for missing or changed conditions.
+- Make reference entry conditions explicit, and keep authentication, exact-session continuation,
+  uncertain-edit handling, isolation, and independent acceptance in the core guidance.
+- Evaluate progressive retrieval against the previous wording and forward-test the final descriptions.
+  Runtime behavior, worker-result v1 and job-journal format 1 are unchanged.
+
 ### use-claude 0.2.0 / use-codex 0.2.0 (prepared, not released)
 
 #### Added
@@ -73,6 +85,13 @@ job journal has its own format version. The earlier 0.1.0 preparation below was 
 - Replace changelog links to the unpublished `v0.1.0` tag and release with the initial commit.
 
 ### Repository maintenance
+
+- Add a fixed-controller evaluation mode to compare both skills with identical controller
+  model/effort/runtime while retaining worker settings and alternating worker order.
+
+- Add an opt-in paired token-effectiveness evaluation with controller/worker accounting,
+  auxiliary model usage, independent acceptance checks, and a dated comparison report.
+  This adds evaluation tooling without changing installed skill contents or versions.
 
 - Move `meta-agent/` to `skills/meta-agent/`, keeping future skill categories separate from
   repository-level `evals/` and `tests/`. Update documentation and test paths; installed skill
