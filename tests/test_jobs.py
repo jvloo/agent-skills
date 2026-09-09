@@ -34,7 +34,7 @@ class JobTests(unittest.TestCase):
         (self.workspace/'notes.txt').write_text('user edit\n')
 
     def command(self, provider, *args):
-        return [sys.executable, str(ROOT/f'meta-agent/use-{provider}/scripts/jobs.py'), *map(str, args)]
+        return [sys.executable, str(ROOT/f'skills/meta-agent/use-{provider}/scripts/jobs.py'), *map(str, args)]
 
     def call(self, provider, *args, ok=True):
         result = subprocess.run(self.command(provider, *args), env=self.env, capture_output=True, text=True, timeout=20)

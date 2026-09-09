@@ -42,7 +42,7 @@ class RunnerTests(unittest.TestCase):
         child_file = case / "child.pid"
         args_file.write_text(json.dumps([sys.executable, str(FIXTURE), scenario, provider, str(child_file)]))
         out = case / "run"
-        cmd = [sys.executable, str(ROOT / f"meta-agent/use-{provider}/scripts/run_worker.py"),
+        cmd = [sys.executable, str(ROOT / f"skills/meta-agent/use-{provider}/scripts/run_worker.py"),
                "--provider", provider, "--argv-file", str(args_file), "--cwd", str(case),
                "--timeout", str(timeout), "--output-dir", str(out)]
         if structured:
@@ -179,7 +179,7 @@ class RunnerTests(unittest.TestCase):
         sentinel.write_text("user data")
         args_file = self.directory / "argv.json"
         args_file.write_text(json.dumps([sys.executable, str(FIXTURE), "success", "codex"]))
-        cmd = [sys.executable, str(ROOT / "meta-agent/use-codex/scripts/run_worker.py"),
+        cmd = [sys.executable, str(ROOT / "skills/meta-agent/use-codex/scripts/run_worker.py"),
                "--provider", "codex", "--argv-file", str(args_file), "--cwd", str(self.directory),
                "--timeout", "5", "--output-dir", str(out)]
         result = subprocess.run(cmd, input="test", text=True, capture_output=True, timeout=5)

@@ -8,8 +8,8 @@ work without coupling them to one agent runtime.
 
 | Category | Skill | Purpose |
 |---|---|---|
-| Meta-agent | [`use-claude`](meta-agent/use-claude/SKILL.md) | Consult or delegate to the local Claude Code CLI. |
-| Meta-agent | [`use-codex`](meta-agent/use-codex/SKILL.md) | Consult or delegate to the local Codex CLI. |
+| Meta-agent | [`use-claude`](skills/meta-agent/use-claude/SKILL.md) | Consult or delegate to the local Claude Code CLI. |
+| Meta-agent | [`use-codex`](skills/meta-agent/use-codex/SKILL.md) | Consult or delegate to the local Codex CLI. |
 
 The current skills form the `meta-agent` category: portable skills for delegating to and
 supervising local CLI agents. Their guidance is independent of the invoking runtime, shell, and
@@ -21,6 +21,21 @@ Both skills share the same workflow, reference structure, worker contract, and r
 Provider differences are limited to CLI commands, authentication, capabilities, lifecycle handling,
 and curated model guidance. Both support bounded consultations, implementation, supervised sessions,
 and internal subagents when the task benefits from them.
+
+## Repository layout
+
+```text
+skills/
+  meta-agent/
+    use-claude/
+    use-codex/
+evals/          # Evaluation scenarios and reports
+tests/          # Automated tests and fixtures
+```
+
+Add future categories under `skills/<category>/<skill-name>/`. Install the individual skill
+folder, including its supporting files. Repository paths have moved from `meta-agent/` to
+`skills/meta-agent/`; existing installed copies keep their runtime discovery paths.
 
 ## Install
 
@@ -61,8 +76,8 @@ Worker controls constrain execution and do not grant user or runtime authority.
 
 Model and effort selection follows explicit choice, verified account/configuration defaults, then
 a justified task adjustment. Provider recommendations are advisory; consult the
-[Claude guidance](meta-agent/use-claude/references/model-selection.md) or
-[Codex guidance](meta-agent/use-codex/references/model-selection.md) for compatibility and billing.
+[Claude guidance](skills/meta-agent/use-claude/references/model-selection.md) or
+[Codex guidance](skills/meta-agent/use-codex/references/model-selection.md) for compatibility and billing.
 Choose model capability separately from effort. Dated evidence references distinguish official
 guidance, firsthand practitioner observations, and local compatibility checks. Measure the cost
 and time of an accepted result, including retries and corrections, when adjusting working defaults.
@@ -110,7 +125,7 @@ python3 -m unittest discover -s tests -v
 See [evaluation guidance](evals/README.md) for fresh-context scenarios, comparison metrics, and
 the distinction between fake-CLI lifecycle checks and live provider verification.
 
-For work that must outlive its waiting client, the optional [job helper](meta-agent/use-codex/references/jobs.md)
+For work that must outlive its waiting client, the optional [job helper](skills/meta-agent/use-codex/references/jobs.md)
 persists attempts and keeps a separate bounded supervisor. It can recover a completed result and
 resume an available exact session after workspace inspection. Missing completion evidence blocks
 automatic recovery; this does not promise exactly-once edits or full host-crash recovery.
