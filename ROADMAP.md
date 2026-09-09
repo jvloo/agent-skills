@@ -18,9 +18,12 @@ general prompting.
 - Provider-specific commands, authentication routes, lifecycle controls, and curated model
   recommendations under one selection policy: explicit choice, verified defaults, then justified
   adjustments.
-- Documented installation paths, independent skill versions initially set to 0.1.0, a versioned result protocol,
+- Documented installation paths, independent skill versions currently prepared at 0.2.0, a versioned result protocol,
   and contribution requirements. A self-contained optional bounded runner and repeatable fake-CLI
   lifecycle tests cover prompt transport, completion, output validation, deadlines, and cancellation.
+- Optional recoverable job journals and first-party launch profiles support client loss,
+  known-result recovery, checked exact-session continuation, and concurrent-writer leases.
+  Unknown outcomes stop for inspection; full host-crash and exactly-once side effects are not promised.
 - Dated model evidence distinguishes official guidance, practitioner observations, and locally
   checked CLI interfaces. Fresh-context scenario definitions and baseline comparison guidance are
   checked in; live provider lifecycle verification and model-quality measurements remain separate.

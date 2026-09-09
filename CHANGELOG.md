@@ -9,6 +9,20 @@ has been published yet; future releases will use [Semantic Versioning](https://s
 
 ## [Unreleased]
 
+### use-claude 0.2.0 / use-codex 0.2.0 (prepared, not released)
+
+#### Added
+
+- Optional recoverable jobs with atomic private journals, pre-dispatch snapshots, per-job
+  supervisors, attempt-specific cancellation, workspace leases, and exact-session continuation.
+- Tested first-party consult/edit launch profiles that preserve permissions and persistence.
+- Recovery checks reject stale workspace state, missing sessions, concurrent resumes, exhausted
+  attempts, and uncertain outcomes instead of automatically replaying edits.
+- Offline client/supervisor interruption, concurrent-job, cancellation, and recovery fixtures.
+
+The existing raw bounded runner remains available. Worker-result v1 is unchanged; the new
+job journal has its own format version. The earlier 0.1.0 preparation below was never tagged.
+
 ### use-claude 0.1.0 / use-codex 0.1.0 (prepared, not released)
 
 #### Added

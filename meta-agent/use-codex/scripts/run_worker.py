@@ -21,7 +21,7 @@ import sys
 import time
 
 
-SKILL_VERSION = "0.1.0"
+SKILL_VERSION = "0.2.0"
 RESULT_PROTOCOL = "worker-result-v1"
 EXIT_CODES = {
     "succeeded": 0, "failed": 1, "incomplete": 2,
