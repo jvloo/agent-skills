@@ -29,7 +29,8 @@ class PackageTests(unittest.TestCase):
         self.assertEqual(*normalized)
 
     def test_copied_resources_remain_identical(self):
-        for relative in ("assets/result.schema.json", "assets/worker-contract.md", "scripts/run_worker.py", "references/runner.md"):
+        for relative in ("assets/result.schema.json", "assets/worker-contract.md", "scripts/run_worker.py",
+                         "scripts/jobs.py", "scripts/launch_profiles.py", "references/runner.md", "references/jobs.md"):
             with self.subTest(path=relative):
                 contents = [(skill / relative).read_text() for skill in SKILLS]
                 if relative == "scripts/run_worker.py":

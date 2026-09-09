@@ -2,7 +2,7 @@
 name: use-codex
 description: Meta-agent skill to consult or delegate a bounded task to the local Codex CLI for reviews, second opinions, implementation, or supervised sessions. Use when the user or active workflow requests that CLI worker. Reviewing or installing this skill does not request a model call; browser UI work and ordinary host subagents are separate.
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # Use Codex
@@ -40,7 +40,8 @@ reviewer chains and recursive handoffs of the same assignment between providers.
    question and sources without prescribing a verdict.
 4. Follow [bounded workers](references/bounded-worker.md) for finite tasks, including long tasks
    that need no steering. Use the [runner guide](references/runner.md) when choosing the optional
-   local helper. Read
+   local helper. For client-disconnect recovery or durable job records, use
+   [recoverable jobs](references/jobs.md). Read
    [supervised sessions](references/supervised-sessions.md) when using resumes, live steering,
    parallel workers, or internal subagents.
 5. Verify completion, inspect artifacts, and run checks appropriate to the change. Add independent

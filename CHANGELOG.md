@@ -9,6 +9,28 @@ has been published yet; future releases will use [Semantic Versioning](https://s
 
 ## [Unreleased]
 
+### use-claude 0.2.0 / use-codex 0.2.0 (prepared, not released)
+
+#### Added
+
+- Optional recoverable jobs with atomic private journals, pre-dispatch snapshots, per-job
+  supervisors, attempt-specific cancellation, workspace leases, and exact-session continuation.
+- Tested first-party consult/edit launch profiles that preserve permissions and persistence.
+- Recovery checks reject stale workspace state, missing sessions, concurrent resumes, exhausted
+  attempts, and uncertain outcomes instead of automatically replaying edits.
+- Offline client/supervisor interruption, concurrent-job, cancellation, and recovery fixtures.
+- [Recovery evaluation](evals/2026-09-09-recoverable-jobs.md): 29 passing fixture tests, independent
+  fresh-context checks, and live Claude/Codex client-loss recovery, exact-session resume, and edits.
+
+#### Fixed
+
+- Check the actual resume subcommand and required profile capabilities before dispatch.
+- Explicitly disable supported Codex plugin/app and related capabilities in generated profiles;
+  ignoring user configuration alone still allowed unrelated plugin startup.
+
+The existing raw bounded runner remains available. Worker-result v1 is unchanged; the new
+job journal has its own format version. The earlier 0.1.0 preparation below was never tagged.
+
 ### use-claude 0.1.0 / use-codex 0.1.0 (prepared, not released)
 
 #### Added
@@ -55,6 +77,7 @@ has been published yet; future releases will use [Semantic Versioning](https://s
 - Adopt independent skill versions and `<skill-name>/v<version>` release tags.
 - Remove the root version file; keep one changelog with skill-specific release entries.
 - Validate each helper against its own skill version while allowing versions to diverge.
+- Align README and roadmap verification status with completed live recovery evidence and remaining gaps.
 
 ## [Initial import] - 2026-09-03
 

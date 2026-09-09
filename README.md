@@ -84,15 +84,18 @@ Both skill directories have the same layout:
 | `references/model-evidence.md` | Dated source evidence; read when changing routing or maintaining guidance. |
 | `references/bounded-worker.md` | Finite calls, limits, persistence, and result handling. |
 | `references/runner.md` | Optional helper usage, output contract, platform support, and cleanup limits. |
+| `references/jobs.md` | Recoverable job profiles, status, cancellation, exact resume, and uncertainty handling. |
 | `references/supervised-sessions.md` | Resume, steering, cleanup, parallel work, and subagents. |
 | `assets/worker-contract.md` | Shared template for complex assignments. |
 | `assets/result.schema.json` | Shared structured handoff schema; optional for plain consultations. |
 | `scripts/run_worker.py` | Literal prompt transport, private artifacts, deadlines, and completion validation. |
+| `scripts/jobs.py` | Atomic job journal, per-job supervision, leases, status, cancellation, and checked resume. |
+| `scripts/launch_profiles.py` | First-party consultation/edit profiles, authentication checks, and session evidence. |
 
 ## Versioning and checks
 
 Each skill is versioned independently in its `SKILL.md` `metadata.version`; both current skills
-are prepared at **0.1.0**. The root [changelog](CHANGELOG.md) records changes by skill and version.
+are prepared at **0.2.0**. The root [changelog](CHANGELOG.md) records changes by skill and version.
 Release tags use `<skill-name>/v<version>`, for example `use-claude/v0.1.0`. Category directories
 are organizational and have no version. See [release guidance](CONTRIBUTING.md#commits-and-releases).
 The worker-result protocol has a separate identity, `urn:jvloo:agent-skills:worker-result:1`;
@@ -107,11 +110,18 @@ python3 -m unittest discover -s tests -v
 See [evaluation guidance](evals/README.md) for fresh-context scenarios, comparison metrics, and
 the distinction between fake-CLI lifecycle checks and live provider verification.
 
+For work that must outlive its waiting client, the optional [job helper](meta-agent/use-codex/references/jobs.md)
+persists attempts and keeps a separate bounded supervisor. It can recover a completed result and
+resume an available exact session after workspace inspection. Missing completion evidence blocks
+automatic recovery; this does not promise exactly-once edits or full host-crash recovery.
+
 ## Project status
 
 No tagged release has been published yet. The [changelog](CHANGELOG.md) records changes since
-the initial import. Structural and deterministic lifecycle tests are repeatable; live provider
-resume/cancellation and measured model-quality comparisons remain separate verification work.
+the initial import. The [recoverable-job evaluation](evals/2026-09-09-recoverable-jobs.md) records
+29 passing fixture tests, fresh-context recovery checks, and live Claude/Codex client-loss recovery,
+exact-session resume, and bounded edits. Live interruption during generation followed by resume,
+additional platforms, and measured model-quality comparisons remain verification work.
 See [CONTRIBUTING.md](CONTRIBUTING.md) and the [roadmap](ROADMAP.md).
 
 ## Contributing

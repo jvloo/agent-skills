@@ -18,12 +18,17 @@ general prompting.
 - Provider-specific commands, authentication routes, lifecycle controls, and curated model
   recommendations under one selection policy: explicit choice, verified defaults, then justified
   adjustments.
-- Documented installation paths, independent skill versions initially set to 0.1.0, a versioned result protocol,
+- Documented installation paths, independent skill versions currently prepared at 0.2.0, a versioned result protocol,
   and contribution requirements. A self-contained optional bounded runner and repeatable fake-CLI
   lifecycle tests cover prompt transport, completion, output validation, deadlines, and cancellation.
+- Optional recoverable job journals and first-party launch profiles support client loss,
+  known-result recovery, checked exact-session continuation, and concurrent-writer leases.
+  Unknown outcomes stop for inspection; full host-crash and exactly-once side effects are not promised.
 - Dated model evidence distinguishes official guidance, practitioner observations, and locally
   checked CLI interfaces. Fresh-context scenario definitions and baseline comparison guidance are
-  checked in; live provider lifecycle verification and model-quality measurements remain separate.
+  checked in. [Recoverable-job evaluation](evals/2026-09-09-recoverable-jobs.md) records 29 passing
+  fixture tests, independent fresh-context checks, and live Claude/Codex client-loss recovery,
+  exact-session resume, and bounded edits. Model-quality improvements have not been measured.
 
 The repository currently publishes source on `main`, with no tagged release. See
 [CHANGELOG.md](CHANGELOG.md) for the initial import and subsequent changes.
@@ -51,8 +56,9 @@ category directories will not be added in advance.
 - Execute and expand the fresh-context scenarios for authorized writes, custom/local providers,
   non-Git work, exact-session continuation, and concurrent writers. Compare measured outcomes
   before making stronger claims about routing quality or instruction improvements.
-- Verify live resume, steering, and child-work cancellation in controlled environments when the
-  required runtime access and model usage are authorized.
+- Extend live lifecycle coverage to interruption during generation followed by resume, steering,
+  and child-work cancellation in controlled environments with authorized runtime access and usage.
+  Completed-session resume and recovery after client loss already have live evidence.
 - Track worker-CLI capability drift without hard-coding one machine, version, model, or shell.
 - Run the documented quality suite on additional supported Python/platform combinations and
   collect live compatibility evidence before widening the helper's support claims.

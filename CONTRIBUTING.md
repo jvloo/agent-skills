@@ -36,7 +36,11 @@ authorization.
 The two entrypoints should match after accounting for provider names and skill versions. Both skill directories must
 have the same file layout; `assets/worker-contract.md`, `assets/result.schema.json`,
 `references/runner.md` must be byte-identical. The `scripts/run_worker.py` copies must match
-except for their package-specific `SKILL_VERSION` constants. Keep shared policies
+except for their package-specific `SKILL_VERSION` constants. Keep the `scripts/jobs.py`,
+`scripts/launch_profiles.py`, and `references/jobs.md` copies identical.
+Keep the job journal format independent from the worker-result protocol and skill version.
+Exercise interruption, concurrency and uncertain-result behavior when changing job supervision.
+Keep shared policies
 consistent while allowing documented provider differences. The duplicated helper keeps each
 installed skill self-contained; change both copies together and verify them with the suite.
 Useful checks from the repository root are:
