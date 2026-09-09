@@ -26,7 +26,10 @@ python3 evals/token_effectiveness/run.py --live --output /tmp/token-effectivenes
 python3 evals/token_effectiveness/summarize.py /tmp/token-effectiveness-run
 ```
 
-`--cases`, `--workers`, and `--repetitions` allow smaller runs. Separate worker-provider batches
+`--cases`, `--workers`, and `--repetitions` allow smaller runs. For revision comparisons,
+`--skill-source <directory-containing-use-claude-and-use-codex>` selects instruction files, and
+`--arms skill` omits the no-skill arm. The execution broker remains the current repository version.
+Pin both the instruction source and broker revision when comparing runs. Separate worker-provider batches
 may run concurrently in distinct output directories; the summary accepts multiple directories.
 Record that concurrency when interpreting latency. Default: four cases × two worker
 providers × two arms × two repetitions = 32 trials. Order alternates baseline/skill by repetition

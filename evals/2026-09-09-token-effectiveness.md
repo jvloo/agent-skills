@@ -128,3 +128,5 @@ Raw prompts, transcripts, session IDs and local paths are not published.
    extra calls. Separately compare recovery mechanisms if evaluating harness value.
 
 No production instruction change or token-saving claim is promoted from this pilot alone.
+
+The [progressive-disclosure follow-up](2026-09-09-progressive-disclosure.md) tests the subsequent candidate and final wording.

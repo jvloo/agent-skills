@@ -9,6 +9,18 @@ has been published yet; future releases will use [Semantic Versioning](https://s
 
 ## [Unreleased]
 
+### use-claude 0.2.1 / use-codex 0.2.1 (prepared, not released)
+
+#### Changed
+
+- Clarify discovery descriptions around requests for the named local CLI worker.
+- Replace the linked reading sequence with a concise essential workflow and a decision-based
+  reference map. Reuse verified host evidence; retrieve detail for missing or changed conditions.
+- Make reference entry conditions explicit, and keep authentication, exact-session continuation,
+  uncertain-edit handling, isolation, and independent acceptance in the core guidance.
+- Evaluate progressive retrieval against the previous wording and forward-test the final descriptions.
+  Runtime behavior, worker-result v1 and job-journal format 1 are unchanged.
+
 ### use-claude 0.2.0 / use-codex 0.2.0 (prepared, not released)
 
 #### Added

@@ -18,7 +18,7 @@ general prompting.
 - Provider-specific commands, authentication routes, lifecycle controls, and curated model
   recommendations under one selection policy: explicit choice, verified defaults, then justified
   adjustments.
-- Documented installation paths, independent skill versions currently prepared at 0.2.0, a versioned result protocol,
+- Documented installation paths, independent skill versions currently prepared at 0.2.1, a versioned result protocol,
   and contribution requirements. A self-contained optional bounded runner and repeatable fake-CLI
   lifecycle tests cover prompt transport, completion, output validation, deadlines, and cancellation.
 - Optional recoverable job journals and first-party launch profiles support client loss,
@@ -61,6 +61,8 @@ category directories will not be added in advance.
 - Extend live lifecycle coverage to interruption during generation followed by resume, steering,
   and child-work cancellation in controlled environments with authorized runtime access and usage.
   Completed-session resume and recovery after client loss already have live evidence.
+- Extend progressive-disclosure evaluation to native controllers and harder tasks; retain
+  authentication, changed-boundary and uncertain-recovery checks while reducing unnecessary reads.
 - Track worker-CLI capability drift without hard-coding one machine, version, model, or shell.
 - Run the documented quality suite on additional supported Python/platform combinations and
   collect live compatibility evidence before widening the helper's support claims.

@@ -1,5 +1,9 @@
 # Model and effort selection
 
+Read when choosing or changing a model/effort setting, resolving compatibility, or diagnosing
+an escalation. An explicit compatible choice or suitable verified default needs no fresh routing
+exercise. Consult the relevant section below; evidence sources are for evaluating recommendations.
+
 ## Shared selection policy
 
 Selection order: explicit user choice, verified account/configuration defaults, then a justified

@@ -1,7 +1,8 @@
 # Supervised sessions
 
-Read when using a resume, live steering, parallel workers, or internal delegation. Prefer a finite
-[bounded worker](bounded-worker.md) when persistence or steering adds no value.
+Read the relevant section when session controls, steering, concurrency, or child-work ownership
+are unresolved. Reuse controls already verified by the host. For finite invocation details, see
+[bounded workers](bounded-worker.md); persistence alone is not a reason to load every section.
 
 ## Resume and steering
 
