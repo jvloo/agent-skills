@@ -27,6 +27,7 @@ argv = [
 Confirm `codex exec resume --help`; resume options differ from a new exec call. Adjust controls
 only within the verified contract. Avoid `--last`/`--all` for dispatch: other activity can select
 the wrong session. Ephemeral runs do not supply durable resume state.
+For a verified directory outside Git, also add `--skip-git-repo-check` to the resume invocation.
 
 ## Supervision and cleanup
 

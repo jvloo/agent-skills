@@ -85,6 +85,9 @@ An exceptional bypass requires specific user/runtime authority and independent e
 Outside Git, use a verified safe directory and add `--skip-git-repo-check`. Keep sandbox and
 approval restrictions intact. Do not initialize a repository or modify trust settings just to ask
 a supplied-text question.
+Keep the sandbox's normal temporary-directory support unless the task requires a stricter boundary.
+If disabling it, verify required tools still work: macOS Git's launcher can need temporary cache
+writes even for inspection. An unrelated cache warning is not evidence that the requested edit is denied.
 
 ## Approval and prompt transport
 

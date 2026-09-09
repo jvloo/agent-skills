@@ -37,6 +37,9 @@ has been published yet; future releases will use [Semantic Versioning](https://s
 
 #### Fixed
 
+- Use a Draft 7 handoff schema accepted by Claude Code's structured-output validator.
+- Clarify absolute Claude file-permission patterns, durable resume evidence, non-Git Codex resume,
+  and temporary-directory requirements found during live bottom-up evaluation.
 - Correct Claude's failed-fetch fallback to retain cached `origin/HEAD` when available.
 - Correct Codex argument quoting, provider-specific authentication checks, and non-Git consultations.
 - Account for Claude background work that can survive cancellation, and preserve required live

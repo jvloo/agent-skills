@@ -15,6 +15,9 @@ Retain `session_id` from print-mode output. Resume with `claude -p --resume <ses
 plus the verified model, tools, permission, budget, and output controls, sending the new contract on
 stdin. Do not assume a bare resume preserves the launch restrictions. A one-shot run with
 `--no-session-persistence` cannot be resumed.
+When resume matters, verify the normal session store is writable and the session was persisted.
+A returned `session_id` alone is insufficient: a sandboxed call can succeed without saving a
+resumable conversation. Resolve the runtime access issue before promising continuity.
 
 For background sessions, use the captured short ID for logs, attach, and stop commands. Attaching
 can restart a stopped session; revalidate before attaching as well as before sending a follow-up.
