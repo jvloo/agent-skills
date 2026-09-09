@@ -69,9 +69,10 @@ instructions, and any ignored files copied into the workspace. Copy only what th
 worktrees do not isolate credentials, network, or external systems. Review and integrate each diff
 before cleanup.
 
-Claude-created worktrees normally start from `origin/HEAD`, with local `HEAD` as fallback
-when no remote is available or fetching fails, unless configured otherwise. Verify the actual ref;
-do not assume it matches the dispatch checkout.
+Claude-created worktrees normally start from `origin/HEAD`, retaining its cached ref when a fetch
+fails. Local `HEAD` is the fallback when no remote is configured, or `origin/HEAD` is unavailable
+and cannot be fetched. Configuration can change the base; verify the actual ref instead of assuming
+it matches the dispatch checkout.
 
 Agent teams do not automatically provide separate worktrees. Under this skill, teammates sharing
 a checkout must be read-only or have at most one active writer. For concurrent editing, use

@@ -6,6 +6,11 @@ Complete [invocation preflight](invocation-safety.md) and scale the
 
 ## Invocation
 
+On macOS/Linux with Python 3.9+, the optional [bounded runner](runner.md) handles literal
+stdin, private logs, deadlines, completion parsing, and the bundled structured handoff. Read
+that reference only when using the helper. It executes the argument list you verify below;
+authentication, permissions, model selection, and required containment remain with the host.
+
 Build an argument list with the host's process API and send the contract on stdin. The examples
 below define argument contents, not shell commands. If a shell is necessary, quote each argument
 for that shell and transport the prompt separately. Use an explicit process cwd.
@@ -66,7 +71,10 @@ interrupted stream, deadline termination, or exhausted budget is incomplete even
 appears. Validate the CLI completion signal before accepting the worker's answer.
 
 Parse the complete JSON envelope, or the final `result` event for `stream-json`.
-Check subtype, `is_error`, and error details. When using `--json-schema`, extract and validate
+Check subtype, `is_error`, and error details. When present, inspect `terminal_reason` and
+`stop_reason`: an interrupted or token-limited result is incomplete even in a success envelope.
+Consume the whole stream; documented informational notifications can follow the result.
+When using `--json-schema`, extract and validate
 `structured_output`, not prose from `result`. Missing structured output is incomplete.
 
 Treat `mcp_server_errors` as a dependency failure when the task requires those servers.
