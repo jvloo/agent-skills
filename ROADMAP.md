@@ -28,7 +28,9 @@ general prompting.
   checked CLI interfaces. Fresh-context scenario definitions and baseline comparison guidance are
   checked in. [Recoverable-job evaluation](evals/2026-09-09-recoverable-jobs.md) records 29 passing
   fixture tests, independent fresh-context checks, and live Claude/Codex client-loss recovery,
-  exact-session resume, and bounded edits. Model-quality improvements have not been measured.
+  exact-session resume, and bounded edits. An [instruction-efficiency pilot](evals/2026-09-09-token-effectiveness.md)
+  compares baseline and skill-guided controllers over a shared harness; it does not establish
+  model-routing quality or native-controller efficiency.
 
 The repository currently publishes source on `main`, with no tagged release. See
 [CHANGELOG.md](CHANGELOG.md) for the initial import and subsequent changes.

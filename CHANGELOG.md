@@ -74,6 +74,10 @@ job journal has its own format version. The earlier 0.1.0 preparation below was 
 
 ### Repository maintenance
 
+- Add an opt-in paired token-effectiveness evaluation with controller/worker accounting,
+  auxiliary model usage, independent acceptance checks, and a dated comparison report.
+  This adds evaluation tooling without changing installed skill contents or versions.
+
 - Move `meta-agent/` to `skills/meta-agent/`, keeping future skill categories separate from
   repository-level `evals/` and `tests/`. Update documentation and test paths; installed skill
   contents and versions are unchanged.

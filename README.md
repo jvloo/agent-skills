@@ -137,6 +137,8 @@ the initial import. The [recoverable-job evaluation](evals/2026-09-09-recoverabl
 29 passing fixture tests, fresh-context recovery checks, and live Claude/Codex client-loss recovery,
 exact-session resume, and bounded edits. Live interruption during generation followed by resume,
 additional platforms, and measured model-quality comparisons remain verification work.
+A [token-effectiveness pilot](evals/2026-09-09-token-effectiveness.md) separately compares
+baseline and skill-guided controllers over the same execution harness.
 See [CONTRIBUTING.md](CONTRIBUTING.md) and the [roadmap](ROADMAP.md).
 
 ## Contributing
