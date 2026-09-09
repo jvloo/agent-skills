@@ -86,6 +86,9 @@ job journal has its own format version. The earlier 0.1.0 preparation below was 
 
 ### Repository maintenance
 
+- Add a fixed-controller evaluation mode to compare both skills with identical controller
+  model/effort/runtime while retaining worker settings and alternating worker order.
+
 - Add an opt-in paired token-effectiveness evaluation with controller/worker accounting,
   auxiliary model usage, independent acceptance checks, and a dated comparison report.
   This adds evaluation tooling without changing installed skill contents or versions.

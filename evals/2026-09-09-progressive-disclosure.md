@@ -80,3 +80,5 @@ No private paths, transcripts, session IDs, or credentials are included in the p
 Native persistent controllers, harder implementation tasks, and live uncertainty/failure scenarios
 still need comparative evaluation. The intended improvement is selective retrieval with intact
 execution requirements, not avoiding information that the task actually needs.
+
+A subsequent [identical-controller comparison](2026-09-09-identical-controller.md) removes the controller-tier difference when comparing the two skills.

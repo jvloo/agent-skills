@@ -114,13 +114,13 @@ print(json.dumps({"passed": len(cases)}))
 
 
 class Trial:
-    def __init__(self, out, worker, case, arm, repetition, skill_source=None):
+    def __init__(self, out, worker, case, arm, repetition, skill_source=None, controller=None):
         self.path = out/f'{worker}-{case}-{repetition}-{arm}'
         self.path.mkdir(mode=0o700)
         self.workspace = self.path/'workspace'; self.workspace.mkdir(mode=0o700)
         self.control = self.path/'controller'; self.control.mkdir(mode=0o700)
         self.worker, self.case, self.arm = worker, case, arm
-        self.controller = 'codex' if worker == 'claude' else 'claude'
+        self.controller = controller or ('codex' if worker == 'claude' else 'claude')
         self.skill = (skill_source or ROOT/'skills/meta-agent')/('use-'+worker)
         self.calls, self.reads, self.records, self.events = [], [], [], []
         self.record_lock = threading.Lock()
@@ -324,6 +324,8 @@ def main():
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--cases',nargs='+',choices=CASES,default=list(CASES))
     parser.add_argument('--workers',nargs='+',choices=['claude','codex'],default=['claude','codex'])
+    parser.add_argument('--controller',choices=['cross','claude','codex'],default='cross',
+                        help='Use a fixed controller provider, or the historical opposite-provider pairing')
     parser.add_argument('--skill-source',type=Path,default=ROOT/'skills/meta-agent',
                         help='Directory containing use-claude and use-codex for revision comparisons')
     parser.add_argument('--arms',nargs='+',choices=['baseline','skill'],default=['baseline','skill'])
@@ -332,11 +334,12 @@ def main():
     schedule=[]
     for repetition in range(args.repetitions):
         for case in args.cases:
-            for worker in args.workers:
+            workers=list(reversed(args.workers)) if args.controller!='cross' and repetition%2 else args.workers
+            for worker in workers:
                 arms=['baseline','skill'] if (repetition+(worker=='codex'))%2==0 else ['skill','baseline']
                 schedule.extend((worker,case,arm,repetition) for arm in arms if arm in args.arms)
     if not args.live:
-        print(json.dumps({'live':False,'trials':schedule},indent=2));return
+        print(json.dumps({'live':False,'controller':args.controller,'trials':schedule},indent=2));return
     out=args.output.resolve()
     if ROOT==out or ROOT in out.parents:
         parser.error('Raw output must be outside the repository')
@@ -344,13 +347,14 @@ def main():
     args.skill_source=args.skill_source.resolve()
     hashes={str(p.relative_to(args.skill_source)):hashlib.sha256(p.read_bytes()).hexdigest()
             for p in args.skill_source.rglob('*') if p.is_file() and '__pycache__' not in p.parts}
-    save(out/'design.json',dict(schedule=schedule,models=MODELS,skill_hashes=hashes,commit=subprocess.check_output(
+    save(out/'design.json',dict(schedule=schedule,controller=args.controller,models=MODELS,skill_hashes=hashes,commit=subprocess.check_output(
         ['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),script_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()))
     shutil.copyfile(__file__, out/'driver-at-start.py')
     for worker,case,arm,repetition in schedule:
         if (out/'STOP').exists():
             print('Stopped at trial boundary by STOP file',flush=True);break
-        trial=Trial(out,worker,case,arm,repetition,args.skill_source)
+        trial=Trial(out,worker,case,arm,repetition,args.skill_source,
+                    None if args.controller=='cross' else args.controller)
         print('START',trial.path.name,flush=True)
         try:
             report=trial.run()

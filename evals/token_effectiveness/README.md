@@ -37,8 +37,12 @@ and worker provider. Repetitions reuse the fixture; recovery markers differ by r
 
 ## Design and boundaries
 
-- `use-claude`: Codex Astra/low controller, Claude Sonnet/medium worker.
-- `use-codex`: Claude Sonnet/medium controller, Codex Astra/low worker.
+- Default `--controller cross`: `use-claude` uses a Codex Astra/low controller and Claude
+  Sonnet/medium worker; `use-codex` uses a Claude Sonnet/medium controller and Codex Astra/low
+  worker. This historical pairing cannot isolate skill overhead across providers.
+- `--controller claude` fixes both controllers to Sonnet/medium; `--controller codex` fixes both
+  to Astra/low. Worker settings remain unchanged. Fixed-controller runs reverse worker order
+  on alternate repetitions. Different worker models/runtimes still limit cross-skill conclusions.
 - Each trial permits eight controller steps and two worker calls, with a 90-second enforced
   deadline per call. Claude has a $0.50 per-call stopping threshold; Codex exposes no dollar cap.
   These are call limits, not a guaranteed overall billing ceiling.
@@ -88,3 +92,16 @@ Claude's cost is a client estimate. Codex has no dollar cost in these outputs, s
 cost per accepted result is unavailable. The outer evaluator's development, analysis, and review
 usage is outside trial counters. Cache state and service latency are uncontrolled. Two repetitions
 per cell support a pilot observation, not a model ranking or statistically reliable general claim.
+
+## Identical-controller comparison
+
+After authorizing live usage, compare both skills with one controller model/runtime:
+
+```sh
+python3 evals/token_effectiveness/run.py --live --output /tmp/same-controller \
+  --controller claude --arms skill --cases consult recovery --repetitions 2
+```
+
+Compare controller and worker counters separately. Holding the controller constant removes the
+earlier controller-tier confound; it does not make the worker models, tokenizers, cache state, or
+CLI startup content identical. This mode still uses fresh controller contexts and transcript replay.

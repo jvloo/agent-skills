@@ -4,6 +4,7 @@ from pathlib import Path
 import tempfile
 import json
 import unittest
+from unittest.mock import patch
 
 spec = importlib.util.spec_from_file_location('token_eval', Path(__file__).resolve().parents[1]/'evals/token_effectiveness/run.py')
 evalmod = importlib.util.module_from_spec(spec)
@@ -14,6 +15,18 @@ summary = importlib.util.module_from_spec(summary_spec)
 summary_spec.loader.exec_module(summary)
 
 class TokenEvalTests(unittest.TestCase):
+    def test_fixed_controller_preserves_worker_settings(self):
+        with tempfile.TemporaryDirectory() as tmp, patch.object(evalmod.shutil,'which',side_effect=lambda p:'/fixture/'+p):
+            root=Path(tmp)
+            for worker in ('claude','codex'):
+                trial=evalmod.Trial(root,worker,'consult','skill',0,controller='claude')
+                self.assertEqual(trial.controller,'claude')
+                self.assertEqual(trial.worker,worker)
+                self.assertEqual(trial.configs[worker]['model'],evalmod.MODELS[worker][0])
+                self.assertEqual(trial.configs[worker]['effort'],evalmod.MODELS[worker][1])
+            default=evalmod.Trial(root,'claude','consult','baseline',0)
+            self.assertEqual(default.controller,'codex')
+
     def test_cache_accounting_provider_semantics(self):
         claude = evalmod.usage('claude', {'usage': {'input_tokens':10,'output_tokens':5,
             'cache_creation_input_tokens':20,'cache_read_input_tokens':30}})

@@ -142,7 +142,9 @@ additional platforms, and measured model-quality comparisons remain verification
 A [token-effectiveness pilot](evals/2026-09-09-token-effectiveness.md) separately compares
 baseline and skill-guided controllers over the same execution harness. The
 [progressive-disclosure follow-up](evals/2026-09-09-progressive-disclosure.md) checks selective
-retrieval and the prepared 0.2.1 descriptions.
+retrieval and the prepared 0.2.1 descriptions. An
+[identical-controller comparison](evals/2026-09-09-identical-controller.md) separates the effect
+of changing controller pairings from cross-skill token totals.
 See [CONTRIBUTING.md](CONTRIBUTING.md) and the [roadmap](ROADMAP.md).
 
 ## Contributing
