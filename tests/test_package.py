@@ -52,6 +52,8 @@ class PackageTests(unittest.TestCase):
 
     def test_handoff_protocol_shape(self):
         schema = json.loads((SKILLS[0] / "assets/result.schema.json").read_text())
+        # Claude Code 2.1.263 rejects the 2020-12 dialect before dispatch.
+        self.assertEqual(schema["$schema"], "http://json-schema.org/draft-07/schema#")
         self.assertEqual(schema["$id"], "urn:jvloo:agent-skills:worker-result:1")
         self.assertEqual(schema["type"], "object")
         self.assertIs(schema["additionalProperties"], False)

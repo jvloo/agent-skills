@@ -73,6 +73,10 @@ documented purpose; combine them only as needed.
 Always choose a permission mode. Use monitored manual/default mode only when a person or handler
 can answer prompts. Never use bypass permissions merely to avoid prompts. An exceptional bypass
 requires specific user/runtime authority and independent external containment.
+For file-specific preapproval, `Edit(//absolute/path)` uses a filesystem-absolute path;
+`Edit(/path)` is relative to the settings source, and `Edit(./path)` is relative to cwd.
+Use `Edit` path rules for file writes too. Verify the rule against the actual worker path;
+see [file permission patterns](https://code.claude.com/docs/en/permissions#read-and-edit).
 For an authorized commit, `--restricted` plus `dontAsk` and a Git allowlist is insufficient:
 the protected-write gate still needs a person or permission handler. Before dispatch, choose a
 compatible authorized execution setup that preserves required containment, or let the invoking
