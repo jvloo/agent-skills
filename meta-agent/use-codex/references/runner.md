@@ -61,6 +61,8 @@ CLI. Claude needs schema JSON text in `--json-schema`; Codex needs its path in `
 The helper validates the fixed `worker-result-v1` handoff, including required fields, types,
 enum values, and rejection of unknown fields. It is not a general JSON Schema validator.
 The schema's `$id` identifies this protocol; `$schema` identifies the JSON Schema language.
+The bundled schema uses Draft 7 for CLI compatibility; Claude Code 2.1.263 rejects a
+Draft 2020-12 declaration before dispatch. Its handoff fields and protocol identity are unchanged.
 
 | Exit | Runtime status | Meaning |
 |---|---|---|

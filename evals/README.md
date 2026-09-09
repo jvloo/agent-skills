@@ -1,5 +1,8 @@
 # Evaluating the meta-agent skills
 
+Recorded runs: [initial offline validation](2026-09-09.md) and
+[bottom-up live evaluation](2026-09-09-bottom-up.md).
+
 The deterministic suite uses local fake CLIs; it never calls a model, reads credentials, or
 mutates an external system:
 
