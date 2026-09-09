@@ -91,8 +91,10 @@ Both skill directories have the same layout:
 
 ## Versioning and checks
 
-The prepared first release version is **0.1.0**, recorded in `VERSION` and each skill's
-`metadata.version`. Both skills are versioned together while their contracts remain coupled.
+Each skill is versioned independently in its `SKILL.md` `metadata.version`; both current skills
+are prepared at **0.1.0**. The root [changelog](CHANGELOG.md) records changes by skill and version.
+Release tags use `<skill-name>/v<version>`, for example `use-claude/v0.1.0`. Category directories
+are organizational and have no version. See [release guidance](CONTRIBUTING.md#commits-and-releases).
 The worker-result protocol has a separate identity, `urn:jvloo:agent-skills:worker-result:1`;
 the JSON Schema `$schema` field identifies the schema language, not the handoff version.
 

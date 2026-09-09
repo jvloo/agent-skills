@@ -1,6 +1,7 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+Notable changes are recorded here by skill and version. Skills release independently;
+category directories have no version. Repository maintenance is tracked separately.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). No tagged release
 has been published yet; future releases will use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -8,9 +9,11 @@ has been published yet; future releases will use [Semantic Versioning](https://s
 
 ## [Unreleased]
 
-### Added
+### use-claude 0.1.0 / use-codex 0.1.0 (prepared, not released)
 
-- Prepared synchronized `0.1.0` skill metadata and a separately identified worker-result v1 protocol.
+#### Added
+
+- Prepared independent `0.1.0` skill metadata and a separately identified worker-result v1 protocol.
 - Optional standard-library bounded runner for macOS/Linux, with private logs, literal prompt
   transport, deadline/cancellation cleanup, provider completion parsing, and handoff validation.
 - Repeatable fake-CLI lifecycle tests, packaging checks, and fresh-context evaluation scenarios.
@@ -18,7 +21,7 @@ has been published yet; future releases will use [Semantic Versioning](https://s
 - Matching model-selection references and a shared structured-result schema for both skills.
 - Roadmap for expanding the collection into additional reusable agent workflows.
 
-### Changed
+#### Changed
 
 - Separate model capability from reasoning effort and optimize the cost/time of accepted results.
 - Keep worker contracts focused on the task; retain launch provenance and controller evidence
@@ -32,7 +35,7 @@ has been published yet; future releases will use [Semantic Versioning](https://s
 - Refresh installation, usage, contribution, roadmap, and release-status documentation to match
   the shared skills.
 
-### Fixed
+#### Fixed
 
 - Correct Claude's failed-fetch fallback to retain cached `origin/HEAD` when available.
 - Correct Codex argument quoting, provider-specific authentication checks, and non-Git consultations.
@@ -43,6 +46,12 @@ has been published yet; future releases will use [Semantic Versioning](https://s
 - Preserve required controls across CLI versions, distinguish agent definitions from type
   restrictions, and distinguish spending thresholds from enforced ceilings.
 - Replace changelog links to the unpublished `v0.1.0` tag and release with the initial commit.
+
+### Repository maintenance
+
+- Adopt independent skill versions and `<skill-name>/v<version>` release tags.
+- Remove the root version file; keep one changelog with skill-specific release entries.
+- Validate each helper against its own skill version while allowing versions to diverge.
 
 ## [Initial import] - 2026-09-03
 

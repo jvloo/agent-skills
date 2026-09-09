@@ -11,17 +11,15 @@ SKILLS = [ROOT / "meta-agent" / name for name in ("use-claude", "use-codex")]
 
 class PackageTests(unittest.TestCase):
     def test_release_versions_and_entrypoints_match(self):
-        version = (ROOT / "VERSION").read_text().strip()
-        self.assertRegex(version, r"^\d+\.\d+\.\d+$")
         normalized = []
         for skill in SKILLS:
             entry = (skill / "SKILL.md").read_text()
-            self.assertIn(f'  version: "{version}"', entry)
+            version = re.search(r'^  version: "(\d+\.\d+\.\d+)"$', entry, re.M).group(1)
             frontmatter = entry.split("---", 2)[1]
             self.assertIn(f"name: {skill.name}\n", frontmatter)
             description = re.search(r"^description: (.+)$", frontmatter, re.M).group(1)
             self.assertLessEqual(len(description), 1024)
-            normalized.append(entry.replace("Claude Code", "Provider").replace("Claude", "Provider")
+            normalized.append(entry.replace(f'  version: "{version}"', '  version: "VERSION"').replace("Claude Code", "Provider").replace("Claude", "Provider")
                               .replace("Codex", "Provider").replace("claude", "provider").replace("codex", "provider"))
             module = ast.parse((skill / "scripts/run_worker.py").read_text())
             constants = {target.id: ast.literal_eval(node.value)
@@ -33,7 +31,11 @@ class PackageTests(unittest.TestCase):
     def test_copied_resources_remain_identical(self):
         for relative in ("assets/result.schema.json", "assets/worker-contract.md", "scripts/run_worker.py", "references/runner.md"):
             with self.subTest(path=relative):
-                self.assertEqual((SKILLS[0] / relative).read_bytes(), (SKILLS[1] / relative).read_bytes())
+                contents = [(skill / relative).read_text() for skill in SKILLS]
+                if relative == "scripts/run_worker.py":
+                    contents = [re.sub(r'^SKILL_VERSION = "[^"\n]+"$', 'SKILL_VERSION = "VERSION"',
+                                       content, flags=re.M) for content in contents]
+                self.assertEqual(*contents)
         layouts = [sorted(str(p.relative_to(skill)) for p in skill.rglob("*")
                           if p.is_file() and "__pycache__" not in p.parts) for skill in SKILLS]
         self.assertEqual(*layouts)

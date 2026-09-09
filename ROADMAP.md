@@ -18,7 +18,7 @@ general prompting.
 - Provider-specific commands, authentication routes, lifecycle controls, and curated model
   recommendations under one selection policy: explicit choice, verified defaults, then justified
   adjustments.
-- Documented installation paths, synchronized 0.1.0 package metadata, a versioned result protocol,
+- Documented installation paths, independent skill versions initially set to 0.1.0, a versioned result protocol,
   and contribution requirements. A self-contained optional bounded runner and repeatable fake-CLI
   lifecycle tests cover prompt transport, completion, output validation, deadlines, and cancellation.
 - Dated model evidence distinguishes official guidance, practitioner observations, and locally
